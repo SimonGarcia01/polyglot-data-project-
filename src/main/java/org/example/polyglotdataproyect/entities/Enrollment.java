@@ -18,13 +18,13 @@ public class Enrollment {
     private EnrollmentId enrollmentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("student")
+    @MapsId("studentId")
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("group")
-    @JoinColumn(name = "ncr", nullable = false)
+    @MapsId("ncr")
+    @JoinColumn(name = "NCR", nullable = false)
     private Group group;
 
     @Column(nullable = false)

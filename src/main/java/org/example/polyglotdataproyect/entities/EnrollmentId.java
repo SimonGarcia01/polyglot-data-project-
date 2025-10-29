@@ -16,21 +16,21 @@ import java.util.Objects;
 public class EnrollmentId implements Serializable {
 
     @Column(nullable = false, length = 15)
-    private String student;
+    private String studentId;
 
     @Column(nullable = false, length = 10)
-    private String group;
+    private String ncr;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if(o instanceof EnrollmentId that){
-            return student.equals(that.student) && group.equals(that.group);
+            return studentId.equals(that.studentId) && ncr.equals(that.ncr);
         } else return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(student, group);
+        return Objects.hash(studentId, ncr);
     }
 }

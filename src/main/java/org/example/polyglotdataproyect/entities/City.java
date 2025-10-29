@@ -32,4 +32,8 @@ public class City {
     @JsonIgnore
     @OneToMany(mappedBy = "birthPlace",  cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Employee> employees;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "birthPlace",   cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Student> students;
 }

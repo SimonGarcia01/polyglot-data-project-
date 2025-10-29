@@ -30,4 +30,7 @@ public class Campus {
     @OneToMany(mappedBy = "campus", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Employee> employees;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "campus",  cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Student> students;
 }

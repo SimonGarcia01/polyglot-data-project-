@@ -1,11 +1,13 @@
 package org.example.polyglotdataproyect.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "STUDENTS")
@@ -30,11 +32,19 @@ public class Student {
     @Column(nullable = false)
     private LocalDate birthDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "birth_place_code", nullable = false)
     private City birthPlace;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "campus_code", nullable = false)
     private Campus campus;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enrollment> enrollments;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<User> users;
 }

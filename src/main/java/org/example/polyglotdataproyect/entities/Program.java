@@ -1,5 +1,6 @@
 package org.example.polyglotdataproyect.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Program {
     @JoinColumn(name = "area_code", nullable = false)
     private Area area;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "program",  cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Program> programs;
+    private List<Subject> subjects;
 }
