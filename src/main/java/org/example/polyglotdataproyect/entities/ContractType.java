@@ -1,0 +1,24 @@
+package org.example.polyglotdataproyect.entities;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Entity
+@Table(name = "CONTRACT_TYPES")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ContractType {
+
+    @Id
+    @Column(length = 30)
+    private String name;
+
+    @OneToMany(mappedBy = "contractType", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<Employee> employees;
+
+}
