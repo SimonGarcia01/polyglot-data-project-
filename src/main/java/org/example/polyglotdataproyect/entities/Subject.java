@@ -4,30 +4,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
-@Table(name = "CAMPUSES")
+@Table(name = "SUBJECTS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Campus {
+public class Subject {
 
     @Id
-    private Integer code;
+    @Column(length = 10)
+    private String code;
 
-    @Column(length = 20)
+    @Column(nullable = false, length = 30)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_code", nullable = false)
-    private City city;
+    @JoinColumn(name = "program_code", nullable = false)
+    private Program program;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "campus", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Employee> employees;
-
+    @OneToMany(mappedBy = "subject",  cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Group> groups;
 }

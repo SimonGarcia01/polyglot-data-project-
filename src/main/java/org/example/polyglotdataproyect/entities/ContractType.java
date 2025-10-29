@@ -1,5 +1,6 @@
 package org.example.polyglotdataproyect.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class ContractType {
     @Column(length = 30)
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "contractType", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<Employee> employees;
 

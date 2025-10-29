@@ -1,9 +1,12 @@
 package org.example.polyglotdataproyect.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "EMPLOYEES")
@@ -44,4 +47,8 @@ public class Employee {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "birth_place_code", nullable = false)
     private City birthPlace;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Group> groups;
 }
