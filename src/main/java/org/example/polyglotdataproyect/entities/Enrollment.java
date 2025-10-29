@@ -23,8 +23,8 @@ public class Enrollment {
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("ncr")
-    @JoinColumn(name = "NCR", nullable = false)
+    @MapsId("nrc")
+    @JoinColumn(name = "NRC", nullable = false)
     private Group group;
 
     @Column(nullable = false)

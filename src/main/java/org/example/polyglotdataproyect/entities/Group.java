@@ -17,7 +17,7 @@ public class Group {
 
     @Id
     @Column(length = 10)
-    private String ncr;
+    private String nrc;
 
     @Column(nullable = false)
     private Integer number;
