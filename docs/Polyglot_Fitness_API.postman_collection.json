@@ -1,0 +1,263 @@
+{
+	"info": {
+		"_postman_id": "fitness-app-collection-001",
+		"name": "Polyglot Fitness API - 5 Endpoints Principales",
+		"description": "Colección con los 5 endpoints más relevantes según el enunciado del proyecto.\n\n**IMPORTANTE:** Ejecutar en este orden para un flujo completo.\n\n**Datos de Prueba:**\n- Entrenadores: paula.r, andres.c\n- Estudiantes: laura.h, pedro.m, ana.s\n- Password: password123",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Login Usuario - Estudiante",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login exitoso\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.username).to.eql('laura.h');",
+							"    pm.expect(jsonData.role).to.eql('STUDENT');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"laura.h\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/login",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["users", "login"]
+				},
+				"description": "**📋 REQUERIMIENTO DEL PDF:**\n> Un usuario debe poder iniciar sesión con su cuenta institucional. Tanto los estudiantes, como los colaboradores y entrenadores tienen cuenta institucional.\n\n**✅ IMPLEMENTACIÓN:**\n- Login con username y password\n- Valida usuario activo\n- Devuelve role (STUDENT/EMPLOYEE/TRAINER)\n- Datos vienen de PostgreSQL (BD institucional)\n\n**👤 Usuarios disponibles:**\n- Estudiantes: laura.h, pedro.m, ana.s, luis.r, sofia.g\n- Entrenadores: paula.r, andres.c\n- Password: password123"
+			},
+			"response": []
+		},
+		{
+			"name": "2. Asignar Entrenador a Estudiante",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Asignación creada\", function () {",
+							"    pm.response.to.have.status(201);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.trainerUsername).to.eql('paula.r');",
+							"    pm.expect(jsonData.studentUsername).to.eql('laura.h');",
+							"    pm.expect(jsonData.isActive).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"trainerUsername\": \"paula.r\",\n  \"studentUsername\": \"laura.h\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/admin/assign",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["admin", "assign"]
+				},
+				"description": "**📋 REQUERIMIENTO DEL PDF:**\n> Debe haber un módulo de administración, donde se puedan asignar un entrenador a un usuario, o modificar su asignación.\n\n**✅ IMPLEMENTACIÓN:**\n- Asigna entrenador certificado a estudiante\n- Valida que trainerUsername tenga rol TRAINER\n- Solo permite 1 entrenador activo por estudiante\n- Guarda en PostgreSQL (tabla trainer_assignments)\n- Actualiza estadísticas del entrenador (newAssignments)\n\n**📊 ESTADÍSTICAS:**\nSe actualiza automáticamente TrainerStatistics en PostgreSQL:\n- Campo: newAssignments (incrementa +1)\n- Por mes y año"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Crear Rutina Prediseñada (Entrenador)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Rutina prediseñada creada\", function () {",
+							"    pm.response.to.have.status(201);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.isPredefined).to.eql(true);",
+							"    pm.expect(jsonData.createdByTrainer).to.eql('paula.r');",
+							"",
+							"    // Guardar ID de rutina para siguiente request",
+							"    pm.environment.set('routine_id', jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Rutina Fuerza Total\",\n  \"description\": \"Rutina diseñada por Paula Ramírez para desarrollo de fuerza en todo el cuerpo. Incluye ejercicios compuestos y aislados.\",\n  \"exerciseIds\": []\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/trainer/paula.r/routine/predefined",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["trainer", "paula.r", "routine", "predefined"]
+				},
+				"description": "**📋 REQUERIMIENTO DEL PDF:**\n> Los entrenadores deben poder subir rutinas prediseñadas para que los usuarios las consulten y adopten.\n\n**✅ IMPLEMENTACIÓN:**\n- Solo usuarios con rol TRAINER pueden crear\n- Se marca isPredefined = true\n- Se guarda en MongoDB (colección routines)\n- Asocia al entrenador creador (createdByTrainer)\n- Lista de exerciseIds (pueden estar vacíos inicialmente)\n\n**💡 NOTA:**\nEn MongoDB ya hay rutinas prediseñadas de ejemplo. Ver con:\nGET /routines/predefined"
+			},
+			"response": []
+		},
+		{
+			"name": "4. Adoptar Rutina Prediseñada",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Rutina adoptada exitosamente\", function () {",
+							"    pm.response.to.have.status(201);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.username).to.eql('laura.h');",
+							"    pm.expect(jsonData.isPredefined).to.eql(false);",
+							"    pm.expect(jsonData.originalRoutineId).to.not.be.null;",
+							"",
+							"    // Guardar ID para progreso",
+							"    pm.environment.set('adopted_routine_id', jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routines/adopt/{{routine_id}}/laura.h",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["routines", "adopt", "{{routine_id}}", "laura.h"]
+				},
+				"description": "**📋 REQUERIMIENTO DEL PDF:**\n> Cuando un usuario adopta una rutina prediseñada, puede hacerle ajustes a su propia copia.\n\n**✅ IMPLEMENTACIÓN:**\n- Crea copia personal de rutina prediseñada\n- Usuario es propietario (username = estudiante)\n- isPredefined = false (ya no es predefinida)\n- Guarda referencia original (originalRoutineId)\n- Se guarda en MongoDB\n- Actualiza estadísticas del usuario (routinesStarted)\n\n**📊 ESTADÍSTICAS:**\nActualiza automáticamente UserStatistics en PostgreSQL:\n- Campo: routinesStarted (incrementa +1)\n- Por mes y año\n\n**🔧 MODIFICABLE:**\nDespués de adoptar, el usuario puede:\n- Cambiar nombre y descripción\n- Agregar/quitar ejercicios\n- Sin afectar la rutina original"
+			},
+			"response": []
+		},
+		{
+			"name": "5. Registrar Progreso de Rutina",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Progreso registrado\", function () {",
+							"    pm.response.to.have.status(201);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.username).to.eql('laura.h');",
+							"    pm.expect(jsonData.metrics).to.include('repeticiones');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"routineId\": \"{{adopted_routine_id}}\",\n  \"progressDate\": \"2025-11-07\",\n  \"metrics\": \"repeticiones:20, tiempo:45min, esfuerzo:alto\",\n  \"notes\": \"Hoy me sentí con mucha energía! Logré completar todas las series. La próxima semana intentaré aumentar el peso.\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/progress/laura.h",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["progress", "laura.h"]
+				},
+				"description": "**📋 REQUERIMIENTO DEL PDF:**\n> Los usuarios, deben poder registrar el progreso diario o semanal (por ejemplo: repeticiones, tiempo, nivel de esfuerzo).\n\n**✅ IMPLEMENTACIÓN:**\n- Registra métricas de progreso\n- Permite notas personales del usuario\n- Se guarda en MongoDB (colección progress)\n- Actualiza estadísticas del usuario (progressRecorded)\n\n**📊 ESTADÍSTICAS:**\nActualiza automáticamente UserStatistics en PostgreSQL:\n- Campo: progressRecorded (incrementa +1)\n- Por mes y año\n\n**👨‍🏫 SEGUIMIENTO DEL ENTRENADOR:**\nEl entrenador asignado puede:\n1. Ver progreso: GET /trainer/paula.r/student/laura.h/progress\n2. Agregar recomendación: POST /trainer/paula.r/progress/{progressId}/recommend\n\n**📊 Cuando entrenador agrega recomendación:**\n- Actualiza TrainerStatistics (recommendationsMade +1)"
+			},
+			"response": []
+		},
+		{
+			"name": "EXTRA: Ver Rutinas Predefinidas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/routines/predefined",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["routines", "predefined"]
+				},
+				"description": "**📋 Endpoint útil para ver rutinas disponibles**\n\nLista todas las rutinas predefinidas creadas por entrenadores.\n\n**Flujo completo:**\n1. Ver rutinas disponibles (este endpoint)\n2. Elegir una rutina\n3. Adoptar rutina (endpoint #4)\n4. Registrar progreso (endpoint #5)"
+			},
+			"response": []
+		},
+		{
+			"name": "EXTRA: Ver Ejercicios Predefinidos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/exercises/predefined",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["exercises", "predefined"]
+				},
+				"description": "**📋 REQUERIMIENTO DEL PDF:**\n> El sistema debe permitir al usuario ingresar y registrar sus rutinas de ejercicio. Se deben poder elegir de ejercicios predefinidos o agregar personalizados.\n\n**✅ IMPLEMENTACIÓN:**\n- Lista ejercicios predefinidos (creados por entrenadores)\n- Incluye: nombre, tipo, descripción, duración, dificultad, videos\n- Se guarda en MongoDB\n\n**🎬 VIDEOS DEMOSTRATIVOS:**\nCada ejercicio incluye URLs de videos de YouTube"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "routine_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adopted_routine_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

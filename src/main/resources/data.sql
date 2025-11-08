@@ -102,17 +102,21 @@ INSERT INTO ENROLLMENTS (student_id, NRC, enrollment_date, status) VALUES
                                                                        ('2004', 'G104', '2023-08-03', 'Withdrawn'),
                                                                        ('2005', 'G105', '2023-08-03', 'Active');
 
--- 16. Users
+-- 16. Users (Estudiantes, Empleados y Entrenadores)
+-- IMPORTANTE: Los Instructores (Paula y Andrés) son ENTRENADORES certificados
 INSERT INTO USERS (username, password_hash, role, student_id, employee_id, is_active, created_at) VALUES
-                                                                                                      ('laura.h', 'hash_lh123', 'STUDENT', '2001', NULL, TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('pedro.m', 'hash_pm123', 'STUDENT', '2002', NULL, TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('ana.s', 'hash_as123', 'STUDENT', '2003', NULL, TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('luis.r', 'hash_lr123', 'STUDENT', '2004', NULL, TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('sofia.g', 'hash_sg123', 'STUDENT', '2005', NULL, TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('juan.p', 'hash_jp123', 'EMPLOYEE', NULL, '1001', TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('maria.g', 'hash_mg123', 'EMPLOYEE', NULL, '1002', TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('carlos.l', 'hash_cl123', 'EMPLOYEE', NULL, '1003', TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('carlos.m', 'hash_cm123', 'EMPLOYEE', NULL, '1004', TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('sandra.o', 'hash_so123', 'EMPLOYEE', NULL, '1005', TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('paula.r', 'hash_pr123', 'EMPLOYEE', NULL, '1007', TRUE, CURRENT_TIMESTAMP),
-                                                                                                      ('andres.c', 'hash_ac123', 'EMPLOYEE', NULL, '1008', TRUE, CURRENT_TIMESTAMP);
+    -- Estudiantes
+    ('laura.h', 'password123', 'STUDENT', '2001', NULL, TRUE, CURRENT_TIMESTAMP),
+    ('pedro.m', 'password123', 'STUDENT', '2002', NULL, TRUE, CURRENT_TIMESTAMP),
+    ('ana.s', 'password123', 'STUDENT', '2003', NULL, TRUE, CURRENT_TIMESTAMP),
+    ('luis.r', 'password123', 'STUDENT', '2004', NULL, TRUE, CURRENT_TIMESTAMP),
+    ('sofia.g', 'password123', 'STUDENT', '2005', NULL, TRUE, CURRENT_TIMESTAMP),
+    -- Empleados Administrativos/Docentes
+    ('juan.p', 'password123', 'EMPLOYEE', NULL, '1001', TRUE, CURRENT_TIMESTAMP),
+    ('maria.g', 'password123', 'EMPLOYEE', NULL, '1002', TRUE, CURRENT_TIMESTAMP),
+    ('carlos.l', 'password123', 'EMPLOYEE', NULL, '1003', TRUE, CURRENT_TIMESTAMP),
+    ('carlos.m', 'password123', 'EMPLOYEE', NULL, '1004', TRUE, CURRENT_TIMESTAMP),
+    ('sandra.o', 'password123', 'EMPLOYEE', NULL, '1005', TRUE, CURRENT_TIMESTAMP),
+    -- Entrenadores Certificados (Instructores de Bienestar)
+    ('paula.r', 'password123', 'TRAINER', NULL, '1007', TRUE, CURRENT_TIMESTAMP),
+    ('andres.c', 'password123', 'TRAINER', NULL, '1008', TRUE, CURRENT_TIMESTAMP);
