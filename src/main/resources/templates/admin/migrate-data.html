@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Migrar Datos de SQL a MongoDB</h1>
+
+        <!-- Mensajes de éxito o error -->
+        <div th:if="${success}" class="alert alert-success">
+            <p th:text="${success}"></p>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <p th:text="${error}"></p>
+        </div>
+
+        <div class="card">
+            <h2>¿Qué hace esta herramienta?</h2>
+            <p>Esta herramienta migra todos los usuarios desde la base de datos SQL (PostgreSQL/H2) a MongoDB.</p>
+            <p>Mapea automáticamente:</p>
+            <ul>
+                <li><strong>Student</strong> → Usuario MongoDB con rol "student"</li>
+                <li><strong>Employee</strong> → Usuario MongoDB con rol "collaborator"</li>
+                <li><strong>Trainer/Admin</strong> → Usuario MongoDB con rol "trainer"</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Opciones de Migración</h2>
+
+            <!-- Migración Incremental -->
+            <div class="migration-option">
+                <h3>Migración Incremental</h3>
+                <p>Solo migra usuarios nuevos que aún no existen en MongoDB.</p>
+                <p><em>Recomendado si ya tienes datos en MongoDB y solo quieres sincronizar nuevos usuarios.</em></p>
+                <form th:action="@{/admin/migrate-data}" method="post" style="display: inline;">
+                    <input type="hidden" name="cleanFirst" value="false" />
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('¿Deseas migrar solo los usuarios nuevos?');">
+                        Ejecutar Migración Incremental
+                    </button>
+                </form>
+            </div>
+
+            <hr style="margin: 2rem 0;">
+
+            <!-- Migración Completa -->
+            <div class="migration-option">
+                <h3>Migración Completa (Limpiar y Migrar)</h3>
+                <p><strong style="color: #d32f2f;">⚠️ ADVERTENCIA:</strong> Esta opción eliminará TODOS los usuarios existentes en MongoDB y los reemplazará con los datos de SQL.</p>
+                <p><em>Usa esta opción solo si quieres sincronizar completamente desde cero.</em></p>
+                <form th:action="@{/admin/migrate-data}" method="post" style="display: inline;">
+                    <input type="hidden" name="cleanFirst" value="true" />
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿ESTÁS SEGURO? Esto eliminará TODOS los usuarios en MongoDB y los reemplazará con los datos de SQL.');">
+                        Ejecutar Migración Completa
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Notas Importantes</h2>
+            <ul>
+                <li>La migración solo incluye usuarios activos (<code>isActive = true</code>)</li>
+                <li>Los usuarios deben tener un Student o Employee asociado</li>
+                <li>El campo <code>sql_user_id</code> en MongoDB apunta al ID de Student/Employee en SQL</li>
+                <li>Puedes ejecutar la migración incremental múltiples veces sin problemas</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <a th:href="@{/admin}" class="btn btn-secondary">Volver al Dashboard</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .migration-option {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .migration-option h3 {
+            margin-top: 0;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
+</body>
+</html>

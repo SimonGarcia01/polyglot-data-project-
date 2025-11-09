@@ -1,0 +1,121 @@
+{
+  "collection": "users",
+  "validator": {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "title": "users",
+      "required": ["_id", "sql_user_id", "name", "role"],
+      "properties": {
+        "_id": { "bsonType": "objectId" },
+        "sql_user_id": { "bsonType": "int" },
+        "name": { "bsonType": "string" },
+        "role": { "enum": ["student", "trainer", "collaborator"] },
+        "email": { "bsonType": "string" },
+        "created_at": { "bsonType": "date" }
+      }
+    }
+  }
+}
+
+--------------------------------------------------------------------------------------
+{
+  "collection": "exercises",
+  "validator": {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "title": "exercises",
+      "required": ["_id", "name", "type"],
+      "properties": {
+        "_id": { "bsonType": "objectId" },
+        "name": { "bsonType": "string" },
+        "type": { "enum": ["cardio", "fuerza", "movilidad"] },
+        "description": { "bsonType": "string" },
+        "duration_min": { "bsonType": "int" },
+        "difficulty": { "enum": ["baja", "media", "alta"] },
+        "video_url": { "bsonType": "string" },
+        "created_by": { "bsonType": "objectId" } 
+      }
+    }
+  }
+}
+
+
+------------------------------------------------------------------------------------------
+{
+  "collection": "routines",
+  "validator": {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "title": "routines",
+      "required": ["_id", "name", "owner_id", "exercises"],
+      "properties": {
+        "_id": { "bsonType": "objectId" },
+        "name": { "bsonType": "string" },
+        "owner_id": { "bsonType": "objectId" },
+        "is_template": { "bsonType": "bool" },
+        "copied_from": { "bsonType": ["objectId", "null"] },
+        "exercises": {
+          "bsonType": "array",
+          "items": {
+            "bsonType": "object",
+            "properties": {
+              "exercise_id": { "bsonType": "objectId" },
+              "sets": { "bsonType": "int" },
+              "reps": { "bsonType": "int" },
+              "duration_min": { "bsonType": "int" }
+            }
+          }
+        },
+        "created_at": { "bsonType": "date" }
+      }
+    }
+  }
+}
+
+
+--------------------------------------------------------------------------------------------
+{
+  "collection": "trainer_trainee",
+  "validator": {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "title": "trainer_trainee",
+      "required": ["_id", "trainer_id", "trainee_id", "assigned_date"],
+      "properties": {
+        "_id": { "bsonType": "objectId" },
+        "trainer_id": { "bsonType": "objectId" },
+        "trainee_id": { "bsonType": "objectId" },
+        "assigned_date": { "bsonType": "date" }
+      }
+    }
+  }
+}
+
+--------------------------------------------------------------------------------------------------
+{
+  "collection": "progress_entry",
+  "validator": {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "title": "progress_entry",
+      "required": ["_id", "user_id", "routine_id", "entries"],
+      "properties": {
+        "_id": { "bsonType": "objectId" },
+        "user_id": { "bsonType": "objectId" },
+        "routine_id": { "bsonType": "objectId" },
+        "entries": {
+          "bsonType": "array",
+          "items": {
+            "bsonType": "object",
+            "properties": {
+              "date": { "bsonType": "date" },
+              "completed_exercises": { "bsonType": "int" },
+              "effort_level": { "bsonType": "int" },
+              "trainer_feedback": { "bsonType": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

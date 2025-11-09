@@ -1,21 +1,54 @@
 package org.example.polyglotdataproyect.services;
 
-import org.example.polyglotdataproyect.entities.TrainerAssignment;
-import org.example.polyglotdataproyect.repositories.TrainerAssignmentRepository;
+import org.example.polyglotdataproyect.entities.MongoUser;
+import org.example.polyglotdataproyect.entities.TrainerTrainee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AdminService {
 
     @Autowired
-    private TrainerAssignmentRepository trainerAssignmentRepository;
+    private AssignmentService assignmentService;
 
-    public TrainerAssignment assignTrainer(TrainerAssignment assignment) {
-        return trainerAssignmentRepository.save(assignment);
+    @Autowired
+    private MongoUserService mongoUserService;
+
+    public TrainerTrainee assignTrainer(String trainerId, String traineeId) {
+        return assignmentService.assignTrainerToTrainee(trainerId, traineeId);
     }
 
-    public java.util.List<TrainerAssignment> getAllAssignments() {
-        return trainerAssignmentRepository.findAll();
+    public List<TrainerTrainee> getAllAssignments() {
+        return assignmentService.getAllAssignments();
+    }
+
+    public List<TrainerTrainee> getAssignmentsByTrainer(String trainerId) {
+        return assignmentService.getAssignmentsByTrainer(trainerId);
+    }
+
+    public void removeAssignment(String trainerId, String traineeId) {
+        assignmentService.removeAssignment(trainerId, traineeId);
+    }
+
+    public void deleteAssignment(String assignmentId) {
+        assignmentService.deleteAssignment(assignmentId);
+    }
+
+    public List<MongoUser> getAllTrainers() {
+        return mongoUserService.getAllTrainers();
+    }
+
+    public List<MongoUser> getAllStudents() {
+        return mongoUserService.getAllStudents();
+    }
+
+    public List<MongoUser> getAllCollaborators() {
+        return mongoUserService.getAllCollaborators();
+    }
+
+    public List<MongoUser> getAllUsers() {
+        return mongoUserService.getAllUsers();
     }
 }

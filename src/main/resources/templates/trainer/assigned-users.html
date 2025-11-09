@@ -10,9 +10,10 @@
 
         <div class="user-list">
             <div class="card" th:each="user : ${assignedUsers}">
-                <h2 class="card-title" th:text="${user.username}">User's Email</h2>
+                <h2 class="card-title" th:text="${user.name}">User's Name</h2>
+                <p th:text="${user.email}">user@example.com</p>
                 <!-- Some quick stats could go here -->
-                <a th:href="@{/trainer/user-progress/{username}(username=${user.username})}" class="btn btn-primary">View Progress</a>
+                <a th:href="@{/trainer/user/{userId}/progress(userId=${user.id})}" class="btn btn-primary">View Progress</a>
             </div>
             <div class="card" th:if="${#lists.isEmpty(assignedUsers)}">
                 <p>You have no users assigned to you yet.</p>

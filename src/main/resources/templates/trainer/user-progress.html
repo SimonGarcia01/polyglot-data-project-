@@ -5,7 +5,7 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container">
-        <h1 th:text="|Progress for ${user.username}|">Progress for user@icesi.edu.co</h1>
+        <h1 th:text="|Progress for ${user.name}|">Progress for user@icesi.edu.co</h1>
 
         <div class="card" th:each="entry : ${progressEntries}">
             <h3 th:text="|Log from ${#temporals.format(entry.progressDate, 'MMMM dd, yyyy')}|">Date</h3>

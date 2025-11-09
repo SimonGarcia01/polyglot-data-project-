@@ -8,12 +8,12 @@ import java.util.List;
 
 @Repository
 public interface RoutineRepository extends MongoRepository<Routine, String> {
-    // Buscar rutinas por username
-    List<Routine> findByUsername(String username);
 
-    // Buscar rutinas predefinidas
-    List<Routine> findByIsPredefined(boolean isPredefined);
+    List<Routine> findByOwnerId(String ownerId);
 
-    // Buscar rutinas creadas por un entrenador
-    List<Routine> findByCreatedByTrainer(String trainerUsername);
+    List<Routine> findByIsTemplate(Boolean isTemplate);
+
+    List<Routine> findByCopiedFrom(String copiedFrom);
+
+    List<Routine> findByNameContainingIgnoreCase(String name);
 }

@@ -1,39 +1,161 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Assignments</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-</head>
+<head th:replace="~{fragments/header :: header}"></head>
 <body>
-    <div th:replace="fragments/navbar :: navbar"></div>
-    <div class="container">
-        <h1>Admin Assignments Page</h1>
-        <p>This is where you can manage assignments for trainers and users.</p>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <h2>All Assignments</h2>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Trainer ID</th>
-                    <th>User ID</th>
-                    <th>Details</th>
-                    <!-- Add more headers as needed -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="assignment : ${assignments}">
-                    <td th:text="${assignment.id}"></td>
-                    <td th:text="${assignment.trainerId}"></td>
-                    <td th:text="${assignment.userId}"></td>
-                    <td th:text="${assignment.assignmentDetails}"></td>
-                    <!-- Add more data cells as needed -->
-                </tr>
-            </tbody>
-        </table>
+    <div class="container">
+        <h1>Trainer-User Assignments</h1>
+        <p>Manage all trainer-user assignments in the system.</p>
+
+        <!-- Mensajes de éxito o error -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Botón para crear nueva asignación -->
+        <div style="margin-bottom: 1.5rem;">
+            <a th:href="@{/admin/assign-trainer}" class="btn btn-primary">
+                + Assign New Trainer
+            </a>
+        </div>
+
+        <!-- Tabla de asignaciones -->
+        <div th:if="${!#lists.isEmpty(assignments)}">
+            <table class="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Trainer</th>
+                        <th>Assigned User</th>
+                        <th>Assignment Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="assignment : ${assignments}">
+                        <!-- Trainer Name -->
+                        <td th:with="trainer=${userMap.get(assignment.trainerId)}">
+                            <span th:if="${trainer != null}">
+                                <strong th:text="${trainer.name}">Trainer Name</strong>
+                                <br/>
+                                <small th:text="${trainer.email}">trainer@example.com</small>
+                            </span>
+                            <span th:if="${trainer == null}">
+                                <em>Trainer not found (ID: <span th:text="${assignment.trainerId}"></span>)</em>
+                            </span>
+                        </td>
+
+                        <!-- Trainee Name -->
+                        <td th:with="trainee=${userMap.get(assignment.traineeId)}">
+                            <span th:if="${trainee != null}">
+                                <strong th:text="${trainee.name}">User Name</strong>
+                                <br/>
+                                <small th:text="${trainee.email}">user@example.com</small>
+                            </span>
+                            <span th:if="${trainee == null}">
+                                <em>User not found (ID: <span th:text="${assignment.traineeId}"></span>)</em>
+                            </span>
+                        </td>
+
+                        <!-- Assignment Date -->
+                        <td th:text="${#dates.format(assignment.assignedDate, 'MMM dd, yyyy')}">Jan 01, 2025</td>
+
+                        <!-- Actions -->
+                        <td>
+                            <form th:action="@{/admin/assignments/{id}/delete(id=${assignment.id})}"
+                                  method="post"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete this assignment?');">
+                                <button type="submit" class="btn btn-danger btn-small">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje si no hay asignaciones -->
+        <div th:if="${#lists.isEmpty(assignments)}" class="card">
+            <p>No trainer assignments found. Click "Assign New Trainer" to create one.</p>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a th:href="@{/admin}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
     </div>
-    <div th:replace="fragments/footer :: footer"></div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .assignments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .assignments-table th {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+        }
+        .assignments-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .assignments-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+    </style>
 </body>
 </html>
