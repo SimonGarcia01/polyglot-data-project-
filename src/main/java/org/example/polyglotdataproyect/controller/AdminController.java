@@ -1,5 +1,10 @@
 package org.example.polyglotdataproyect.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.example.polyglotdataproyect.entities.TrainerAssignment;
 import org.example.polyglotdataproyect.entities.TrainerStatistics;
 import org.example.polyglotdataproyect.entities.User;
@@ -8,15 +13,17 @@ import org.example.polyglotdataproyect.repositories.TrainerStatisticsRepository;
 import org.example.polyglotdataproyect.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
 
     private final TrainerAssignmentRepository trainerAssignmentRepository;
@@ -166,7 +173,7 @@ public class AdminController {
         int year = now.getYear();
         int month = now.getMonthValue();
 
-        Optional<TrainerStatistics> statsOpt = trainerStatisticsRepository.findByTrainerUsernameAndYearAndMonth(trainerUsername, year, month);
+        Optional<TrainerStatistics> statsOpt = trainerStatisticsRepository.findByTrainerUsernameAndYearValueAndMonthValue(trainerUsername, year, month);
         TrainerStatistics stats;
 
         if (statsOpt.isPresent()) {
@@ -174,8 +181,8 @@ public class AdminController {
         } else {
             stats = new TrainerStatistics();
             stats.setTrainerUsername(trainerUsername);
-            stats.setYear(year);
-            stats.setMonth(month);
+            stats.setYearValue(year);
+            stats.setMonthValue(month);
         }
 
         stats.setNewAssignments(stats.getNewAssignments() + 1);

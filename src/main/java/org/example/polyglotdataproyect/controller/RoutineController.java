@@ -1,5 +1,9 @@
 package org.example.polyglotdataproyect.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.example.polyglotdataproyect.dto.RoutineDto;
 import org.example.polyglotdataproyect.entities.Routine;
 import org.example.polyglotdataproyect.entities.User;
@@ -9,14 +13,17 @@ import org.example.polyglotdataproyect.repositories.UserRepository;
 import org.example.polyglotdataproyect.repositories.UserStatisticsRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/routines")
+@RequestMapping("/api/routines")
 public class RoutineController {
 
     private final RoutineRepository routineRepository;
@@ -145,7 +152,7 @@ public class RoutineController {
         int year = now.getYear();
         int month = now.getMonthValue();
 
-        Optional<UserStatistics> statsOpt = userStatisticsRepository.findByUsernameAndYearAndMonth(username, year, month);
+        Optional<UserStatistics> statsOpt = userStatisticsRepository.findByUsernameAndYearValueAndMonthValue(username, year, month);
         UserStatistics stats;
 
         if (statsOpt.isPresent()) {
@@ -153,8 +160,8 @@ public class RoutineController {
         } else {
             stats = new UserStatistics();
             stats.setUsername(username);
-            stats.setYear(year);
-            stats.setMonth(month);
+            stats.setYearValue(year);
+            stats.setMonthValue(month);
         }
 
         if (routineStarted) {

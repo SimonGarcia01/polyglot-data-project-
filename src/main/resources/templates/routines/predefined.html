@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Predefined Routines</h1>
+        <p>Explore routines designed by our expert trainers. Adopt one and customize it to fit your goals!</p>
+
+        <div class="card" th:each="routine : ${predefinedRoutines}">
+            <h2 class="card-title" th:text="${routine.name}">Routine Name</h2>
+            <p th:text="${routine.description}">Routine description goes here.</p>
+            <div class="routine-actions">
+                <!-- This form would trigger the 'adopt' endpoint -->
+                <form th:action="@{/routines/adopt/{id}(id=${routine.id})}" method="post">
+                    <button type="submit" class="btn btn-primary">Adopt and Customize</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card" th:if="${#lists.isEmpty(predefinedRoutines)}">
+            <p>No predefined routines available at the moment. Check back later!</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

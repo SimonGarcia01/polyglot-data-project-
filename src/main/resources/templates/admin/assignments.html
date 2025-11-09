@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Assignments</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <div class="container">
+        <h1>Admin Assignments Page</h1>
+        <p>This is where you can manage assignments for trainers and users.</p>
+
+        <h2>All Assignments</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Trainer ID</th>
+                    <th>User ID</th>
+                    <th>Details</th>
+                    <!-- Add more headers as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="assignment : ${assignments}">
+                    <td th:text="${assignment.id}"></td>
+                    <td th:text="${assignment.trainerId}"></td>
+                    <td th:text="${assignment.userId}"></td>
+                    <td th:text="${assignment.assignmentDetails}"></td>
+                    <!-- Add more data cells as needed -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

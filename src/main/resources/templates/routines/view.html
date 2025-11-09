@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>My Routines</h1>
+            <a th:href="@{/routines/new}" class="btn btn-primary">Create New Routine</a>
+        </div>
+
+        <div class="card" th:each="routine : ${routines}">
+            <h2 class="card-title" th:text="${routine.name}">Routine Name</h2>
+            <p th:text="${routine.description}">Routine description goes here.</p>
+            <div class="routine-actions">
+                <a th:href="@{/progress/log(routineId=${routine.id})}" class="btn btn-primary">Start Workout</a>
+                <a th:href="@{/routines/edit/{id}(id=${routine.id})}" class="btn btn-secondary">Edit</a>
+            </div>
+        </div>
+
+        <div class="card" th:if="${#lists.isEmpty(routines)}">
+            <p>You don't have any routines yet. Try creating one or adopting a predefined routine!</p>
+        </div>
+
+        <div class="card">
+            <h2>Looking for inspiration?</h2>
+            <p>Check out our predefined routines designed by expert trainers.</p>
+            <a th:href="@{/routines/predefined}" class="btn btn-secondary">Browse Predefined Routines</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,758 @@
+{
+	"info": {
+		"_postman_id": "a8c1b2d3-e4f5-4a6b-8c9d-0e1f2a3b4c5d",
+		"name": "Polyglot Fitness API v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Assign Trainer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trainerUsername\": \"paula.r\",\n    \"studentUsername\": \"laura.h\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/assign",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"assign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reassign Trainer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trainerUsername\": \"paula.r\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/assign/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"assign",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unassign Trainer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/assign/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"assign",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/assignments/active",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"assignments",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/assignments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"assignments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/assignments/student/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"assignments",
+								"student",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trainer Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/assignments/trainer/trainer1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"assignments",
+								"trainer",
+								"trainer1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Exercises",
+			"item": [
+				{
+					"name": "Create Exercise",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Push-ups\",\n    \"type\": \"Strength\",\n    \"description\": \"A basic push-up.\",\n    \"duration\": \"10 minutes\",\n    \"difficulty\": \"Beginner\",\n    \"videos\": [\"http://example.com/pushup.mp4\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/exercises/trainer1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"trainer1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Predefined Exercises",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/predefined",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"predefined"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/type/Strength",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"type",
+								"Strength"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/user/trainer1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"user",
+								"trainer1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Exercises",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercise by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/some-exercise-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"some-exercise-id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Exercise",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Advanced Push-ups\",\n    \"type\": \"Strength\",\n    \"description\": \"An advanced push-up.\",\n    \"duration\": \"15 minutes\",\n    \"difficulty\": \"Intermediate\",\n    \"videos\": [\"http://example.com/pushup-adv.mp4\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/exercises/some-exercise-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"some-exercise-id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Exercise",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/exercises/some-exercise-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"exercises",
+								"some-exercise-id"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Progress",
+			"item": [
+				{
+					"name": "Record Progress",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"routineId\": \"some-routine-id\",\n    \"progressDate\": \"2025-11-07T10:00:00Z\",\n    \"metrics\": {\"reps\": 15, \"sets\": 3},\n    \"notes\": \"Felt good!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/progress/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"progress",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Progress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/progress/user/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"progress",
+								"user",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Routine Progress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/progress/routine/some-routine-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"progress",
+								"routine",
+								"some-routine-id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Routine Progress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/progress/user/student1/routine/some-routine-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"progress",
+								"user",
+								"student1",
+								"routine",
+								"some-routine-id"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Routines",
+			"item": [
+				{
+					"name": "Create Routine",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"My Custom Routine\",\n    \"description\": \"A routine for chest day.\",\n    \"exerciseIds\": [\"exercise-id-1\", \"exercise-id-2\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/routines/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"routines",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Routines by Username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/routines/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"routines",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Predefined Routines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/routines/predefined",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"routines",
+								"predefined"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adopt Routine",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/routines/adopt/predefined-routine-id/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"routines",
+								"adopt",
+								"predefined-routine-id",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Routine",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"My Updated Routine\",\n    \"description\": \"An updated routine for chest day.\",\n    \"exerciseIds\": [\"exercise-id-1\", \"exercise-id-3\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/routines/some-routine-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"routines",
+								"some-routine-id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Routine",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/routines/some-routine-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"routines",
+								"some-routine-id"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trainer",
+			"item": [
+				{
+					"name": "Get Assigned Students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/trainer/trainer1/students",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trainer",
+								"trainer1",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Routines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/trainer/trainer1/student/student1/routines",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trainer",
+								"trainer1",
+								"student",
+								"student1",
+								"routines"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Progress",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/trainer/trainer1/student/student1/progress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trainer",
+								"trainer1",
+								"student",
+								"student1",
+								"progress"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Recommendation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recommendation\": \"Great job! Try to increase the weight next time.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/trainer/trainer1/progress/some-progress-id/recommend",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trainer",
+								"trainer1",
+								"progress",
+								"some-progress-id",
+								"recommend"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Predefined Routine",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Cardio Blast\",\n    \"description\": \"A high-intensity cardio routine.\",\n    \"exerciseIds\": [\"exercise-id-4\", \"exercise-id-5\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/trainer/trainer1/routine/predefined",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trainer",
+								"trainer1",
+								"routine",
+								"predefined"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trainer Predefined Routines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/trainer/trainer1/routines/predefined",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"trainer",
+								"trainer1",
+								"routines",
+								"predefined"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"student1\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/student1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"student1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}

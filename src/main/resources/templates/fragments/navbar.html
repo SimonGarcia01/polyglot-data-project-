@@ -1,0 +1,16 @@
+<nav class="navbar" th:fragment="navbar">
+    <div class="navbar-brand">
+        <a th:href="@{/dashboard}">Polyglot Fitness</a>
+    </div>
+    <ul class="navbar-nav">
+        <li><a th:href="@{/dashboard}">Dashboard</a></li>
+        <li><a th:href="@{/routines}">My Routines</a></li>
+        <li><a th:href="@{/progress}">My Progress</a></li>
+        <li><a th:href="@{/exercises}">Exercises</a></li>
+        <!-- Trainer-specific links -->
+        <li><a th:href="@{/trainer/assigned-users}">Assigned Users</a></li>
+        <!-- Admin-specific links -->
+        <li><a th:href="@{/admin/assign-trainer}">Assign Trainer</a></li>
+        <li><a th:href="@{/logout}">Logout</a></li>
+    </ul>
+</nav>

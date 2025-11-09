@@ -1,14 +1,30 @@
 package org.example.polyglotdataproyect.controller;
 
-import org.example.polyglotdataproyect.entities.*;
-import org.example.polyglotdataproyect.repositories.*;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.example.polyglotdataproyect.entities.Progress;
+import org.example.polyglotdataproyect.entities.Routine;
+import org.example.polyglotdataproyect.entities.TrainerAssignment;
+import org.example.polyglotdataproyect.entities.TrainerStatistics;
+import org.example.polyglotdataproyect.entities.User;
+import org.example.polyglotdataproyect.repositories.ProgressRepository;
+import org.example.polyglotdataproyect.repositories.RoutineRepository;
+import org.example.polyglotdataproyect.repositories.TrainerAssignmentRepository;
+import org.example.polyglotdataproyect.repositories.TrainerStatisticsRepository;
+import org.example.polyglotdataproyect.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/trainer")
@@ -160,7 +176,7 @@ public class TrainerController {
         int year = now.getYear();
         int month = now.getMonthValue();
 
-        Optional<TrainerStatistics> statsOpt = trainerStatisticsRepository.findByTrainerUsernameAndYearAndMonth(trainerUsername, year, month);
+        Optional<TrainerStatistics> statsOpt = trainerStatisticsRepository.findByTrainerUsernameAndYearValueAndMonthValue(trainerUsername, year, month);
         TrainerStatistics stats;
 
         if (statsOpt.isPresent()) {
@@ -168,8 +184,8 @@ public class TrainerController {
         } else {
             stats = new TrainerStatistics();
             stats.setTrainerUsername(trainerUsername);
-            stats.setYear(year);
-            stats.setMonth(month);
+            stats.setYearValue(year);
+            stats.setMonthValue(month);
         }
 
         stats.setRecommendationsMade(stats.getRecommendationsMade() + 1);

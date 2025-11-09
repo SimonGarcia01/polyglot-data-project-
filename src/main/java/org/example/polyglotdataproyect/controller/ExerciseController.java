@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/exercises")
+@RequestMapping("/api/exercises")
 public class ExerciseController {
 
     private final ExerciseRepository exerciseRepository;

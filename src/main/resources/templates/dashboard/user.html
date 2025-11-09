@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Welcome, <span th:text="${user.username}">User</span>!</h1>
+        <p>This is your personal fitness dashboard.</p>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2 class="card-title">My Routines</h2>
+                <p>You have <strong th:text="${routineCount}">X</strong> active routines.</p>
+                <a th:href="@{/routines}" class="btn btn-primary">View Routines</a>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Log Progress</h2>
+                <p>Track your workout for today.</p>
+                <a th:href="@{/progress/log}" class="btn btn-primary">Log Progress</a>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Browse Exercises</h2>
+                <p>Discover new exercises and predefined routines.</p>
+                <a th:href="@{/exercises}" class="btn btn-secondary">Browse Exercises</a>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Monthly Stats</h2>
+                <p>Routines started this month: <strong th:text="${stats.routinesStarted}">Y</strong></p>
+                <p>Progress logged this month: <strong th:text="${stats.progressLogged}">Z</strong></p>
+            </div>
+        </div>
+
+        <!-- Innovative Report 1: Activity Heatmap -->
+        <div class="card">
+            <h2 class="card-title">Your Activity Heatmap</h2>
+            <p>This heatmap shows your workout consistency over the past year.</p>
+            <!-- Placeholder for a real heatmap component -->
+            <div class="heatmap-placeholder">
+                <!-- This would be rendered with JavaScript -->
+                <p><em>[Activity Heatmap will be displayed here]</em></p>
+            </div>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

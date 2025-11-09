@@ -1,6 +1,11 @@
 package org.example.polyglotdataproyect.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "trainer_statistics")
@@ -13,11 +18,11 @@ public class TrainerStatistics {
     @Column(nullable = false, length = 30)
     private String trainerUsername;
 
-    @Column(nullable = false)
-    private int year;
+    @Column(nullable = false, name = "year_value")
+    private int yearValue;
 
-    @Column(nullable = false)
-    private int month; // 1-12
+    @Column(nullable = false, name = "month_value") 
+    private int monthValue; // 1-12  
 
     // Cantidad de asignaciones nuevas en el mes
     @Column(nullable = false)
@@ -44,20 +49,20 @@ public class TrainerStatistics {
         this.trainerUsername = trainerUsername;
     }
 
-    public int getYear() {
-        return year;
+    public int getYearValue() {
+        return yearValue;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setYearValue(int yearValue) {
+        this.yearValue = yearValue;
     }
 
-    public int getMonth() {
-        return month;
+    public int getMonthValue() {
+        return monthValue;
     }
 
-    public void setMonth(int month) {
-        this.month = month;
+    public void setMonthValue(int monthValue) {
+        this.monthValue = monthValue;
     }
 
     public int getNewAssignments() {

@@ -13,11 +13,11 @@ public class UserStatistics {
     @Column(nullable = false, length = 30)
     private String username;
 
-    @Column(nullable = false)
-    private int year;
+    @Column(name = "year_value", nullable = false)
+    private int yearValue;
 
-    @Column(nullable = false)
-    private int month; // 1-12
+    @Column(name = "month_value", nullable = false)
+    private int monthValue; // 1-12
 
     // Cantidad de rutinas que ha iniciado en el mes
     @Column(nullable = false)
@@ -44,20 +44,20 @@ public class UserStatistics {
         this.username = username;
     }
 
-    public int getYear() {
-        return year;
+    public int getYearValue() {
+        return yearValue;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setYearValue(int yearValue) {
+        this.yearValue = yearValue;
     }
 
-    public int getMonth() {
-        return month;
+    public int getMonthValue() {
+        return monthValue;
     }
 
-    public void setMonth(int month) {
-        this.month = month;
+    public void setMonthValue(int monthValue) {
+        this.monthValue = monthValue;
     }
 
     public int getRoutinesStarted() {

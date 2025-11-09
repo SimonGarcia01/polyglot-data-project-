@@ -111,6 +111,8 @@ INSERT INTO USERS (username, password_hash, role, student_id, employee_id, is_ac
     ('ana.s', 'password123', 'STUDENT', '2003', NULL, TRUE, CURRENT_TIMESTAMP),
     ('luis.r', 'password123', 'STUDENT', '2004', NULL, TRUE, CURRENT_TIMESTAMP),
     ('sofia.g', 'password123', 'STUDENT', '2005', NULL, TRUE, CURRENT_TIMESTAMP),
+    -- Administrador
+    ('admin', 'adminpass', 'ADMIN', NULL, NULL, TRUE, CURRENT_TIMESTAMP),
     -- Empleados Administrativos/Docentes
     ('juan.p', 'password123', 'EMPLOYEE', NULL, '1001', TRUE, CURRENT_TIMESTAMP),
     ('maria.g', 'password123', 'EMPLOYEE', NULL, '1002', TRUE, CURRENT_TIMESTAMP),

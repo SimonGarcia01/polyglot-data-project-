@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>My Progress History</h1>
+            <a th:href="@{/progress/log}" class="btn btn-primary">Log New Progress</a>
+        </div>
+
+        <!-- Innovative Report 2: Progress Over Time Chart -->
+        <div class="card">
+            <h2 class="card-title">Performance Overview</h2>
+            <p>Track your key metrics over the last 30 days.</p>
+            <!-- Placeholder for a real chart component -->
+            <div class="chart-placeholder">
+                <!-- This would be rendered with JavaScript (e.g., using Chart.js) -->
+                <p><em>[Progress Chart will be displayed here]</em></p>
+            </div>
+        </div>
+
+        <div class="card" th:each="entry : ${progressEntries}">
+            <h3 th:text="|Progress for ${#temporals.format(entry.progressDate, 'MMMM dd, yyyy')}|">Date</h3>
+            <p><strong>Routine:</strong> <span th:text="${entry.routineName}">Routine Name</span></p>
+            <p><strong>Metrics:</strong> <span th:text="${entry.metrics}">e.g., Reps: 12, Weight: 50kg</span></p>
+            <p><strong>Notes:</strong> <span th:text="${entry.notes}">User notes...</span></p>
+            <div th:if="${entry.trainerRecommendation}" class="trainer-feedback">
+                <strong>Trainer Feedback:</strong> <span th:text="${entry.trainerRecommendation}"></span>
+            </div>
+        </div>
+
+        <div class="card" th:if="${#lists.isEmpty(progressEntries)}">
+            <p>You haven't logged any progress yet. Let's get started!</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

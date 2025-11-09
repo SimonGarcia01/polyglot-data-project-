@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1 th:text="|Progress for ${user.username}|">Progress for user@icesi.edu.co</h1>
+
+        <div class="card" th:each="entry : ${progressEntries}">
+            <h3 th:text="|Log from ${#temporals.format(entry.progressDate, 'MMMM dd, yyyy')}|">Date</h3>
+            <p><strong>Routine:</strong> <span th:text="${entry.routineName}">Routine Name</span></p>
+            <p><strong>Metrics:</strong> <span th:text="${entry.metrics}">e.g., Reps: 12, Weight: 50kg</span></p>
+            <p><strong>User Notes:</strong> <span th:text="${entry.notes}">User notes...</span></p>
+
+            <div class="feedback-section">
+                <h4>Your Feedback</h4>
+                <form th:action="@{/trainer/recommendation}" method="post">
+                    <input type="hidden" name="progressId" th:value="${entry.id}" />
+                    <div class="input-group">
+                        <textarea name="recommendation" rows="3" th:text="${entry.trainerRecommendation}" placeholder="Provide constructive feedback or encouragement..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Save Feedback</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card" th:if="${#lists.isEmpty(progressEntries)}">
+            <p>This user has not logged any progress yet.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Exercise Library</h1>
+            <!-- Button visible only to trainers -->
+            <a th:href="@{/exercises/new}" class="btn btn-primary">Add New Exercise</a>
+        </div>
+
+        <div class="card" th:each="exercise : ${exercises}">
+            <h2 class="card-title" th:text="${exercise.name}">Exercise Name</h2>
+            <p><strong>Type:</strong> <span th:text="${exercise.type}">Cardio</span></p>
+            <p><strong>Difficulty:</strong> <span th:text="${exercise.difficulty}">Intermediate</span></p>
+            <p th:text="${exercise.description}">Description of the exercise.</p>
+            <div th:if="${exercise.videos != null and !exercise.videos.isEmpty()}">
+                <strong>Demo Videos:</strong>
+                <ul>
+                    <li th:each="video : ${exercise.videos}"><a th:href="${video}" target="_blank" th:text="${video}">Watch</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

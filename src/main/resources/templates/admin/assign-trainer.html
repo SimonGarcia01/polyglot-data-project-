@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Assign Trainer to User</h1>
+        <form th:action="@{/admin/assign-trainer}" method="post" class="form-card">
+            <div class="input-group">
+                <label for="studentUsername">Select User</label>
+                <select id="studentUsername" name="studentUsername" required>
+                    <option th:each="user : ${users}"
+                            th:value="${user.username}"
+                            th:text="${user.username}">User Email</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="trainerUsername">Select Trainer</label>
+                <select id="trainerUsername" name="trainerUsername" required>
+                    <option th:each="trainer : ${trainers}"
+                            th:value="${trainer.username}"
+                            th:text="${trainer.username}">Trainer Email</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign</button>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
