@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="report-header">
+            <h1>🏆 Rutinas Más Populares</h1>
+            <p>Descubre qué rutinas template son las más adoptadas por la comunidad</p>
+            <a th:href="@{/reports}" class="btn btn-secondary">← Volver a Informes</a>
+        </div>
+
+        <div class="intro-section">
+            <h3>📊 Análisis de Popularidad</h3>
+            <p>Estas estadísticas muestran cuáles rutinas prediseñadas han sido copiadas más veces por otros usuarios. Una rutina popular generalmente indica que es efectiva, bien estructurada y genera buenos resultados.</p>
+        </div>
+
+        <div class="ranking-container" th:if="${!#lists.isEmpty(popularRoutines)}">
+            <div class="ranking-item" th:each="routine, iterStat : ${popularRoutines}">
+                <div class="rank-number" th:classappend="${iterStat.index == 0 ? 'gold' : (iterStat.index == 1 ? 'silver' : (iterStat.index == 2 ? 'bronze' : ''))}">
+                    <span th:if="${iterStat.index == 0}">🥇</span>
+                    <span th:if="${iterStat.index == 1}">🥈</span>
+                    <span th:if="${iterStat.index == 2}">🥉</span>
+                    <span th:if="${iterStat.index > 2}" th:text="${iterStat.index + 1}">4</span>
+                </div>
+
+                <div class="routine-info">
+                    <h3 th:text="${routine.routineName}">Routine Name</h3>
+                    <div class="routine-stats">
+                        <span class="copy-count">
+                            👥 <strong th:text="${routine.copyCount}">0</strong>
+                            <span th:text="${routine.copyCount == 1 ? 'copia' : 'copias'}">copias</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="routine-actions">
+                    <a th:href="@{/routines/{id}(id=${routine.routineId})}" class="btn btn-sm btn-secondary">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-data" th:if="${#lists.isEmpty(popularRoutines)}">
+            <div class="no-data-icon">📊</div>
+            <h3>Sin Datos Disponibles</h3>
+            <p>Aún no hay rutinas template que hayan sido copiadas por usuarios. ¡Sé el primero en adoptar una rutina prediseñada!</p>
+            <a th:href="@{/routines/templates}" class="btn btn-primary">Ver Templates Disponibles</a>
+        </div>
+
+        <!-- Insights Section -->
+        <div class="insights-section" th:if="${!#lists.isEmpty(popularRoutines)}">
+            <h3>💡 Insights</h3>
+
+            <div class="insight-card">
+                <strong>🏆 Rutina Más Popular:</strong>
+                <span th:text="${popularRoutines[0].routineName}">N/A</span> con
+                <span th:text="${popularRoutines[0].copyCount}">0</span> copias.
+                Esta rutina ha demostrado ser la favorita de la comunidad.
+            </div>
+
+            <div class="insight-card" th:if="${popularRoutines.size() >= 3}">
+                <strong>📊 Top 3:</strong>
+                Las tres rutinas más populares acumulan
+                <span th:text="${popularRoutines[0].copyCount + popularRoutines[1].copyCount + popularRoutines[2].copyCount}">0</span>
+                copias en total, representando gran parte de la adopción de templates.
+            </div>
+
+            <div class="insight-card">
+                <strong>💡 Recomendación:</strong>
+                Si estás empezando, considera probar las rutinas más populares. La alta adopción generalmente indica que son efectivas y bien diseñadas.
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <h3>🎯 ¿Quieres Crear una Rutina Popular?</h3>
+            <p>Si eres entrenador, puedes crear rutinas template que ayuden a toda la comunidad. Diseña rutinas efectivas, bien estructuradas y con objetivos claros para que más usuarios las adopten.</p>
+            <div class="cta-buttons">
+                <a th:href="@{/routines/templates}" class="btn btn-primary">Ver Templates</a>
+                <a th:href="@{/routines/new}" class="btn btn-secondary"
+                   th:if="${currentUserRole == 'TRAINER' or currentUserRole == 'ADMIN'}">Crear Template</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .report-header {
+            margin-bottom: 30px;
+        }
+
+        .intro-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .intro-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .intro-section p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .ranking-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .ranking-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .rank-number {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            background: #e0e0e0;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .rank-number.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            font-size: 2.5em;
+        }
+
+        .rank-number.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+            color: white;
+            font-size: 2.2em;
+        }
+
+        .rank-number.bronze {
+            background: linear-gradient(135deg, #CD7F32, #B8860B);
+            color: white;
+            font-size: 2em;
+        }
+
+        .routine-info {
+            flex: 1;
+        }
+
+        .routine-info h3 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .routine-stats {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .copy-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-count strong {
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+
+        .routine-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .no-data {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .no-data-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .no-data h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .no-data p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .insights-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .insights-section h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .insight-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CAF50;
+            line-height: 1.6;
+        }
+
+        .insight-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .insight-card strong {
+            color: #333;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .cta-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .cta-buttons .btn {
+            padding: 12px 30px;
+        }
+
+        .cta-buttons .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .cta-buttons .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .cta-buttons .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</body>
+</html>

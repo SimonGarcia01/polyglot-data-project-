@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>📊 Informes y Estadísticas</h1>
+        <p class="subtitle">Visualiza tu progreso y descubre insights sobre tus entrenamientos</p>
+
+        <div class="reports-grid">
+            <!-- Activity Heatmap -->
+            <div class="report-card">
+                <div class="report-icon">🔥</div>
+                <h2>Activity Heatmap</h2>
+                <p>Visualiza tu consistencia de entrenamientos en los últimos 365 días con un mapa de calor estilo GitHub.</p>
+                <ul class="report-features">
+                    <li>📅 Calendario anual de actividad</li>
+                    <li>🎯 Identifica patrones de entrenamiento</li>
+                    <li>💪 Mantén tu racha activa</li>
+                </ul>
+                <a th:href="@{/reports/activity-heatmap}" class="btn btn-primary">Ver Heatmap</a>
+            </div>
+
+            <!-- Progress by Type -->
+            <div class="report-card">
+                <div class="report-icon">📈</div>
+                <h2>Progreso por Tipo de Ejercicio</h2>
+                <p>Analiza tu progreso separado por tipo: cardio, fuerza y movilidad.</p>
+                <ul class="report-features">
+                    <li>🏃 Sesiones de cardio vs fuerza vs movilidad</li>
+                    <li>💯 Esfuerzo promedio por categoría</li>
+                    <li>🎨 Gráficos interactivos</li>
+                </ul>
+                <a th:href="@{/reports/progress-by-type}" class="btn btn-primary">Ver Análisis</a>
+            </div>
+
+            <!-- Consistency Report -->
+            <div class="report-card">
+                <div class="report-icon">⭐</div>
+                <h2>Reporte de Consistencia</h2>
+                <p>Evalúa tu compromiso con el entrenamiento mediante métricas de consistencia.</p>
+                <ul class="report-features">
+                    <li>🔥 Racha actual y récord personal</li>
+                    <li>📊 Score de consistencia (0-100)</li>
+                    <li>📅 Días activos en el último mes</li>
+                </ul>
+                <a th:href="@{/reports/consistency}" class="btn btn-primary">Ver Consistencia</a>
+            </div>
+
+            <!-- Popular Templates -->
+            <div class="report-card">
+                <div class="report-icon">🏆</div>
+                <h2>Rutinas Más Populares</h2>
+                <p>Descubre qué rutinas template son las más adoptadas por otros usuarios.</p>
+                <ul class="report-features">
+                    <li>👥 Ranking de rutinas más copiadas</li>
+                    <li>💡 Inspírate en las favoritas</li>
+                    <li>🌟 Tendencias de la comunidad</li>
+                </ul>
+                <a th:href="@{/reports/popular-templates}" class="btn btn-primary">Ver Ranking</a>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>💡 ¿Por qué son útiles estos informes?</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>📊 Visualización de Datos</strong>
+                    <p>Los datos crudos son difíciles de interpretar. Estos informes transforman tus registros de progreso en visualizaciones claras y accionables.</p>
+                </div>
+                <div class="info-item">
+                    <strong>🎯 Identifica Patrones</strong>
+                    <p>Descubre cuándo eres más consistente, qué tipos de ejercicio prefieres y cómo mejorar tu rutina.</p>
+                </div>
+                <div class="info-item">
+                    <strong>💪 Mantén la Motivación</strong>
+                    <p>Ver tu progreso visualmente te ayuda a mantenerte motivado y comprometido con tus objetivos fitness.</p>
+                </div>
+                <div class="info-item">
+                    <strong>📈 Toma Decisiones</strong>
+                    <p>Usa los insights para ajustar tu entrenamiento, equilibrar cardio/fuerza/movilidad y optimizar resultados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .report-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .report-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .report-card h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .report-card p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .report-features {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .report-features li {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .report-features li:last-child {
+            border-bottom: none;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+
+        .info-section h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .info-item strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .info-item p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin: 0;
+        }
+    </style>
+</body>
+</html>

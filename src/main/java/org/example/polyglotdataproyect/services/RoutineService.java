@@ -15,6 +15,9 @@ public class RoutineService {
     @Autowired
     private RoutineRepository routineRepository;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     public List<Routine> getAllRoutines() {
         return routineRepository.findAll();
     }
@@ -46,7 +49,14 @@ public class RoutineService {
         if (routine.getIsTemplate() == null) {
             routine.setIsTemplate(false);
         }
-        return routineRepository.save(routine);
+        Routine saved = routineRepository.save(routine);
+
+        // Actualizar estadísticas: incrementar rutinas iniciadas
+        if (routine.getOwnerId() != null && !Boolean.TRUE.equals(routine.getIsTemplate())) {
+            statisticsService.incrementRoutineStarted(routine.getOwnerId());
+        }
+
+        return saved;
     }
 
     public Routine copyRoutineForUser(String routineId, String newOwnerId) {
@@ -60,20 +70,57 @@ public class RoutineService {
             copiedRoutine.setCopiedFrom(routineId);
             copiedRoutine.setExercises(originalRoutine.getExercises());
             copiedRoutine.setCreatedAt(new Date());
-            return routineRepository.save(copiedRoutine);
+            Routine saved = routineRepository.save(copiedRoutine);
+
+            // Actualizar estadísticas: incrementar rutinas iniciadas
+            statisticsService.incrementRoutineStarted(newOwnerId);
+
+            return saved;
         }
         return null;
     }
 
-    public Routine updateRoutine(String id, Routine routine) {
-        if (routineRepository.existsById(id)) {
-            routine.setId(id);
-            return routineRepository.save(routine);
+    public Routine updateRoutine(String id, Routine routine, String currentUserId) {
+        Optional<Routine> existingOpt = routineRepository.findById(id);
+
+        if (existingOpt.isEmpty()) {
+            throw new RuntimeException("Routine not found");
         }
-        return null;
+
+        Routine existing = existingOpt.get();
+
+        // Validar ownership: solo el dueño puede editar (templates pueden ser editadas por trainers/admin)
+        if (!existing.getOwnerId().equals(currentUserId) && !Boolean.TRUE.equals(existing.getIsTemplate())) {
+            throw new RuntimeException("You can only edit your own routines");
+        }
+
+        routine.setId(id);
+        // Preservar ownerId original
+        routine.setOwnerId(existing.getOwnerId());
+        return routineRepository.save(routine);
     }
 
-    public void deleteRoutine(String id) {
+    public void deleteRoutine(String id, String currentUserId) {
+        Optional<Routine> existingOpt = routineRepository.findById(id);
+
+        if (existingOpt.isEmpty()) {
+            throw new RuntimeException("Routine not found");
+        }
+
+        Routine existing = existingOpt.get();
+
+        // Validar ownership: solo el dueño puede eliminar
+        if (!existing.getOwnerId().equals(currentUserId)) {
+            throw new RuntimeException("You can only delete your own routines");
+        }
+
+        routineRepository.deleteById(id);
+    }
+
+    /**
+     * Versión sin validación para uso interno/admin
+     */
+    public void deleteRoutineById(String id) {
         routineRepository.deleteById(id);
     }
 }

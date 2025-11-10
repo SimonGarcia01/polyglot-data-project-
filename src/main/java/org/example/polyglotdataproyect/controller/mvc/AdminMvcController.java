@@ -1,9 +1,11 @@
 package org.example.polyglotdataproyect.controller.mvc;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.polyglotdataproyect.entities.MongoUser;
 import org.example.polyglotdataproyect.entities.TrainerTrainee;
 import org.example.polyglotdataproyect.services.AdminService;
 import org.example.polyglotdataproyect.services.DataMigrationService;
+import org.example.polyglotdataproyect.util.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,15 +26,44 @@ public class AdminMvcController {
     @Autowired
     private DataMigrationService dataMigrationService;
 
+    @Autowired
+    private UserContext userContext;
+
+    /**
+     * Verifica que el usuario tenga rol de ADMIN
+     */
+    private boolean checkAdminRole(HttpSession session, RedirectAttributes redirectAttributes) {
+        String currentUser = (String) session.getAttribute("currentUser");
+        String currentUserRole = (String) session.getAttribute("currentUserRole");
+
+        if (currentUser == null || !"ADMIN".equals(currentUserRole)) {
+            redirectAttributes.addFlashAttribute("error", "Acceso denegado. Solo administradores pueden acceder a esta sección.");
+            return false;
+        }
+        return true;
+    }
+
     @GetMapping
-    public String adminDashboard(Model model) {
+    public String adminDashboard(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (!checkAdminRole(session, redirectAttributes)) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
         model.addAttribute("users", adminService.getAllUsers());
         model.addAttribute("assignments", adminService.getAllAssignments());
         return "dashboard/admin";
     }
 
     @GetMapping("/assign-trainer")
-    public String assignTrainerForm(Model model) {
+    public String assignTrainerForm(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (!checkAdminRole(session, redirectAttributes)) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
         model.addAttribute("trainers", adminService.getAllTrainers());
         model.addAttribute("students", adminService.getAllStudents());
         model.addAttribute("collaborators", adminService.getAllCollaborators());
@@ -42,7 +73,12 @@ public class AdminMvcController {
     @PostMapping("/assign-trainer")
     public String assignTrainer(@RequestParam String trainerId,
                                @RequestParam String traineeId,
+                               HttpSession session,
                                RedirectAttributes redirectAttributes) {
+        if (!checkAdminRole(session, redirectAttributes)) {
+            return "redirect:/auth/login";
+        }
+
         try {
             adminService.assignTrainer(trainerId, traineeId);
             redirectAttributes.addFlashAttribute("success", "Entrenador asignado exitosamente");
@@ -53,7 +89,11 @@ public class AdminMvcController {
     }
 
     @GetMapping("/assignments")
-    public String viewAssignments(Model model) {
+    public String viewAssignments(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (!checkAdminRole(session, redirectAttributes)) {
+            return "redirect:/auth/login";
+        }
+
         List<TrainerTrainee> assignments = adminService.getAllAssignments();
         List<MongoUser> allUsers = adminService.getAllUsers();
 
@@ -63,6 +103,8 @@ public class AdminMvcController {
             userMap.put(user.getId(), user);
         }
 
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
         model.addAttribute("assignments", assignments);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("userMap", userMap);
@@ -71,7 +113,12 @@ public class AdminMvcController {
 
     @PostMapping("/assignments/{assignmentId}/delete")
     public String deleteAssignment(@PathVariable String assignmentId,
+                                  HttpSession session,
                                   RedirectAttributes redirectAttributes) {
+        if (!checkAdminRole(session, redirectAttributes)) {
+            return "redirect:/auth/login";
+        }
+
         try {
             adminService.deleteAssignment(assignmentId);
             redirectAttributes.addFlashAttribute("success", "Asignación eliminada exitosamente");
@@ -82,13 +129,24 @@ public class AdminMvcController {
     }
 
     @GetMapping("/migrate-data")
-    public String showMigrationPage(Model model) {
+    public String showMigrationPage(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (!checkAdminRole(session, redirectAttributes)) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
         return "admin/migrate-data";
     }
 
     @PostMapping("/migrate-data")
     public String migrateData(@RequestParam(required = false, defaultValue = "false") boolean cleanFirst,
+                             HttpSession session,
                              RedirectAttributes redirectAttributes) {
+        if (!checkAdminRole(session, redirectAttributes)) {
+            return "redirect:/auth/login";
+        }
+
         try {
             int migratedCount;
             if (cleanFirst) {

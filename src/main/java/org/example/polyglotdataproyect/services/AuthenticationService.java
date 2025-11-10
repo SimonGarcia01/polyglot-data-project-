@@ -20,7 +20,7 @@ public class AuthenticationService {
     private MongoUserRepository mongoUserRepository;
 
     public User login(String username, String rawPassword) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsernameWithRelations(username);
         if (user != null && user.getIsActive() && user.getPasswordHash().equals(rawPassword)) {
             // Sincronizar o crear usuario en MongoDB si no existe
             syncUserWithMongo(user);
@@ -32,6 +32,13 @@ public class AuthenticationService {
     private void syncUserWithMongo(User sqlUser) {
         // Buscar si el usuario ya existe en MongoDB por sql_user_id
         String sqlUserId = extractSqlUserId(sqlUser);
+
+        // Validar que sqlUserId no sea null
+        if (sqlUserId == null) {
+            System.err.println("No se pudo extraer sqlUserId para el usuario: " + sqlUser.getUsername());
+            return;
+        }
+
         Optional<MongoUser> existingMongoUser = mongoUserRepository.findBySqlUserId(sqlUserId);
 
         if (existingMongoUser.isEmpty()) {
@@ -42,25 +49,33 @@ public class AuthenticationService {
             mongoUser.setRole(mapRoleToMongoRole(sqlUser.getRole()));
 
             // Intentar obtener email si está disponible
+            String email = null;
             if (sqlUser.getStudent() != null && sqlUser.getStudent().getEmail() != null) {
-                mongoUser.setEmail(sqlUser.getStudent().getEmail());
+                email = sqlUser.getStudent().getEmail();
             } else if (sqlUser.getEmployee() != null && sqlUser.getEmployee().getEmail() != null) {
-                mongoUser.setEmail(sqlUser.getEmployee().getEmail());
+                email = sqlUser.getEmployee().getEmail();
             }
+
+            // Usar username como email por defecto si no se encuentra
+            if (email == null || email.isEmpty()) {
+                email = sqlUser.getUsername() + "@default.com";
+            }
+            mongoUser.setEmail(email);
 
             mongoUser.setCreatedAt(new Date());
             mongoUserRepository.save(mongoUser);
         }
     }
 
-    private String extractSqlUserId(User sqlUser) {
+    public String extractSqlUserId(User sqlUser) {
         // Extraer el ID del usuario desde Student o Employee
         if (sqlUser.getStudent() != null) {
             return sqlUser.getStudent().getId();
         } else if (sqlUser.getEmployee() != null) {
             return sqlUser.getEmployee().getId();
         }
-        return null;
+        // Si no hay Student ni Employee, usar el username como ID
+        return sqlUser.getUsername();
     }
 
     private String mapRoleToMongoRole(String sqlRole) {

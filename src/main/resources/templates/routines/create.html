@@ -6,7 +6,7 @@
 
     <div class="container">
         <h1>Create a New Routine</h1>
-        <form th:action="@{/routines}" method="post" class="form-card">
+        <form th:action="@{/routines/new}" method="post" class="form-card">
             <div class="input-group">
                 <label for="name">Routine Name</label>
                 <input type="text" id="name" name="name" required>
@@ -20,7 +20,7 @@
                 <h3>Select Exercises</h3>
                 <!-- This would be a dynamic list, maybe with search/filter capabilities -->
                 <div class="exercise-selection-list">
-                    <div th:each="exercise : ${allExercises}">
+                    <div th:each="exercise : ${exercises}">
                         <input type="checkbox" name="exerciseIds" th:value="${exercise.id}" th:id="|exec_${exercise.id}|">
                         <label th:for="|exec_${exercise.id}|" th:text="${exercise.name}">Exercise Name</label>
                     </div>

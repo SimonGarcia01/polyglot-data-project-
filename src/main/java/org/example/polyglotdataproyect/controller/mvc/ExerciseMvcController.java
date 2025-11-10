@@ -1,5 +1,6 @@
 package org.example.polyglotdataproyect.controller.mvc;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.polyglotdataproyect.entities.Exercise;
 import org.example.polyglotdataproyect.services.ExerciseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,15 @@ public class ExerciseMvcController {
     private ExerciseService exerciseService;
 
     @GetMapping
-    public String listExercises(Model model,
+    public String listExercises(HttpSession session,
+                               Model model,
                                @RequestParam(required = false) String type,
                                @RequestParam(required = false) String difficulty,
                                @RequestParam(required = false) String search) {
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
+        model.addAttribute("userId", session.getAttribute("currentUserId"));
+
         if (search != null && !search.isEmpty()) {
             model.addAttribute("exercises", exerciseService.searchExercisesByName(search));
         } else if (type != null && !type.isEmpty()) {
@@ -56,7 +62,12 @@ public class ExerciseMvcController {
     }
 
     @GetMapping("/{id}")
-    public String viewExercise(@PathVariable String id, Model model) {
+    public String viewExercise(@PathVariable String id,
+                              HttpSession session,
+                              Model model) {
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
+
         Optional<Exercise> exercise = exerciseService.getExerciseById(id);
         if (exercise.isPresent()) {
             model.addAttribute("exercise", exercise.get());
@@ -66,7 +77,12 @@ public class ExerciseMvcController {
     }
 
     @GetMapping("/{id}/edit")
-    public String editExerciseForm(@PathVariable String id, Model model) {
+    public String editExerciseForm(@PathVariable String id,
+                                  HttpSession session,
+                                  Model model) {
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
+
         Optional<Exercise> exercise = exerciseService.getExerciseById(id);
         if (exercise.isPresent()) {
             model.addAttribute("exercise", exercise.get());
@@ -78,9 +94,13 @@ public class ExerciseMvcController {
     @PostMapping("/{id}/edit")
     public String updateExercise(@PathVariable String id,
                                 @ModelAttribute Exercise exercise,
+                                HttpSession session,
                                 RedirectAttributes redirectAttributes) {
+        String currentUserId = (String) session.getAttribute("currentUserId");
+        String currentUserRole = (String) session.getAttribute("currentUserRole");
+
         try {
-            exerciseService.updateExercise(id, exercise);
+            exerciseService.updateExercise(id, exercise, currentUserId, currentUserRole);
             redirectAttributes.addFlashAttribute("success", "Ejercicio actualizado exitosamente");
             return "redirect:/exercises/" + id;
         } catch (Exception e) {
@@ -90,9 +110,14 @@ public class ExerciseMvcController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteExercise(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    public String deleteExercise(@PathVariable String id,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
+        String currentUserId = (String) session.getAttribute("currentUserId");
+        String currentUserRole = (String) session.getAttribute("currentUserRole");
+
         try {
-            exerciseService.deleteExercise(id);
+            exerciseService.deleteExercise(id, currentUserId, currentUserRole);
             redirectAttributes.addFlashAttribute("success", "Ejercicio eliminado exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar ejercicio: " + e.getMessage());

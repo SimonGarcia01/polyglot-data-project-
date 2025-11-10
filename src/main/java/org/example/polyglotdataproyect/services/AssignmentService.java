@@ -16,6 +16,9 @@ public class AssignmentService {
     @Autowired
     private TrainerTraineeRepository trainerTraineeRepository;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     public List<TrainerTrainee> getAllAssignments() {
         return trainerTraineeRepository.findAll();
     }
@@ -32,20 +35,30 @@ public class AssignmentService {
         // Primero verificamos si ya existe una asignación para este trainee
         Optional<TrainerTrainee> existingAssignment = trainerTraineeRepository.findByTraineeId(traineeId);
 
+        boolean isNewAssignment = existingAssignment.isEmpty();
+
+        TrainerTrainee saved;
         if (existingAssignment.isPresent()) {
             // Si ya existe, actualizamos el trainer
             TrainerTrainee assignment = existingAssignment.get();
             assignment.setTrainerId(trainerId);
             assignment.setAssignedDate(new Date());
-            return trainerTraineeRepository.save(assignment);
+            saved = trainerTraineeRepository.save(assignment);
         } else {
             // Si no existe, creamos una nueva asignación
             TrainerTrainee assignment = new TrainerTrainee();
             assignment.setTrainerId(trainerId);
             assignment.setTraineeId(traineeId);
             assignment.setAssignedDate(new Date());
-            return trainerTraineeRepository.save(assignment);
+            saved = trainerTraineeRepository.save(assignment);
         }
+
+        // Actualizar estadísticas: incrementar nuevas asignaciones solo si es nueva
+        if (isNewAssignment) {
+            statisticsService.incrementNewAssignment(trainerId);
+        }
+
+        return saved;
     }
 
     @Transactional

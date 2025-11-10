@@ -13,12 +13,12 @@
                     <optgroup label="Students">
                         <option th:each="student : ${students}"
                                 th:value="${student.id}"
-                                th:text="${student.name + ' (' + student.email + ')'}">Student</option>
+                                th:text="|${student.name} (${student.email})|">Student</option>
                     </optgroup>
                     <optgroup label="Collaborators">
                         <option th:each="collaborator : ${collaborators}"
                                 th:value="${collaborator.id}"
-                                th:text="${collaborator.name + ' (' + collaborator.email + ')'}">Collaborator</option>
+                                th:text="|${collaborator.name} (${collaborator.email})|">Collaborator</option>
                     </optgroup>
                 </select>
             </div>
@@ -27,7 +27,7 @@
                 <select id="trainerId" name="trainerId" required>
                     <option th:each="trainer : ${trainers}"
                             th:value="${trainer.id}"
-                            th:text="${trainer.name + ' (' + trainer.email + ')'}">Trainer</option>
+                            th:text="|${trainer.name} (${trainer.email})|">Trainer</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Assign</button>

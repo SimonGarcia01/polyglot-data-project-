@@ -1,5 +1,6 @@
 package org.example.polyglotdataproyect.controller.mvc;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.polyglotdataproyect.entities.Routine;
 import org.example.polyglotdataproyect.services.ExerciseService;
 import org.example.polyglotdataproyect.services.RoutineService;
@@ -22,9 +23,14 @@ public class RoutineMvcController {
     private ExerciseService exerciseService;
 
     @GetMapping
-    public String viewRoutines(Model model,
+    public String viewRoutines(HttpSession session,
+                              Model model,
                               @RequestParam(required = false) String ownerId,
                               @RequestParam(required = false) Boolean templates) {
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
+        model.addAttribute("userId", session.getAttribute("currentUserId"));
+
         if (templates != null && templates) {
             model.addAttribute("routines", routineService.getTemplateRoutines());
             model.addAttribute("isTemplateView", true);
@@ -32,24 +38,37 @@ public class RoutineMvcController {
             model.addAttribute("routines", routineService.getRoutinesByOwner(ownerId));
             model.addAttribute("isTemplateView", false);
         } else {
-            model.addAttribute("routines", routineService.getAllRoutines());
+            // Si no se especifica, mostrar las del usuario actual
+            String currentUserId = (String) session.getAttribute("currentUserId");
+            if (currentUserId != null) {
+                model.addAttribute("routines", routineService.getRoutinesByOwner(currentUserId));
+            } else {
+                model.addAttribute("routines", routineService.getAllRoutines());
+            }
             model.addAttribute("isTemplateView", false);
         }
         return "routines/list";
     }
 
     @GetMapping("/new")
-    public String createRoutineForm(Model model) {
+    public String createRoutineForm(HttpSession session, Model model) {
         model.addAttribute("routine", new Routine());
         model.addAttribute("exercises", exerciseService.getAllExercises());
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
         return "routines/create";
     }
 
     @PostMapping("/new")
     public String createRoutine(@ModelAttribute Routine routine,
                                @RequestParam(required = false) String ownerId,
+                               HttpSession session,
                                RedirectAttributes redirectAttributes) {
         try {
+            // Si no se proporciona ownerId, usar el usuario actual de la sesión
+            if (ownerId == null || ownerId.isEmpty()) {
+                ownerId = (String) session.getAttribute("currentUserId");
+            }
             routine.setOwnerId(ownerId);
             routineService.createRoutine(routine);
             redirectAttributes.addFlashAttribute("success", "Rutina creada exitosamente");
@@ -85,9 +104,12 @@ public class RoutineMvcController {
     @PostMapping("/{id}/edit")
     public String updateRoutine(@PathVariable String id,
                                @ModelAttribute Routine routine,
+                               HttpSession session,
                                RedirectAttributes redirectAttributes) {
+        String currentUserId = (String) session.getAttribute("currentUserId");
+
         try {
-            routineService.updateRoutine(id, routine);
+            routineService.updateRoutine(id, routine, currentUserId);
             redirectAttributes.addFlashAttribute("success", "Rutina actualizada exitosamente");
             return "redirect:/routines/" + id;
         } catch (Exception e) {
@@ -116,9 +138,13 @@ public class RoutineMvcController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteRoutine(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    public String deleteRoutine(@PathVariable String id,
+                               HttpSession session,
+                               RedirectAttributes redirectAttributes) {
+        String currentUserId = (String) session.getAttribute("currentUserId");
+
         try {
-            routineService.deleteRoutine(id);
+            routineService.deleteRoutine(id, currentUserId);
             redirectAttributes.addFlashAttribute("success", "Rutina eliminada exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar rutina: " + e.getMessage());
@@ -127,8 +153,11 @@ public class RoutineMvcController {
     }
 
     @GetMapping("/templates")
-    public String viewTemplates(Model model) {
-        model.addAttribute("routines", routineService.getTemplateRoutines());
+    public String viewTemplates(HttpSession session, Model model) {
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
+        model.addAttribute("userId", session.getAttribute("currentUserId"));
+        model.addAttribute("templateRoutines", routineService.getTemplateRoutines());
         return "routines/templates";
     }
 }

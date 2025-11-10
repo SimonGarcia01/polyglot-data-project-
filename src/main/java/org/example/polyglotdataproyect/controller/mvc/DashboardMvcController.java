@@ -30,17 +30,35 @@ public class DashboardMvcController {
     @GetMapping
     public String dashboard(@RequestParam(required = false) String userId, Model model) {
         // Dashboard general para usuarios (estudiantes/colaboradores)
-        if (userId != null && !userId.isEmpty()) {
-            mongoUserService.getUserById(userId).ifPresent(user -> {
-                model.addAttribute("user", user);
-                model.addAttribute("routines", routineService.getRoutinesByOwner(userId));
-                model.addAttribute("progressEntries", progressService.getProgressEntriesByUser(userId));
-                model.addAttribute("templateRoutines", routineService.getTemplateRoutines());
-                model.addAttribute("userId", userId);
-                model.addAttribute("routineCount", routineService.getRoutinesByOwner(userId).size());
-            });
+        if (userId == null || userId.isEmpty()) {
+            // Si no hay userId, redirigir al login
+            return "redirect:/auth/login";
         }
+
+        var userOptional = mongoUserService.getUserBySqlUserId(userId);
+        if (userOptional.isEmpty()) {
+            // Si no se encuentra el usuario en MongoDB, redirigir al login
+            return "redirect:/auth/login?error=user_not_found";
+        }
+
+        var user = userOptional.get();
+        var routines = routineService.getRoutinesByOwner(userId);
+        var progressEntries = progressService.getProgressEntriesByUser(userId);
+
+        model.addAttribute("user", user);
+        model.addAttribute("routines", routines);
+        model.addAttribute("progressEntries", progressEntries);
+        model.addAttribute("templateRoutines", routineService.getTemplateRoutines());
+        model.addAttribute("userId", userId);
+        model.addAttribute("routineCount", routines.size());
         model.addAttribute("exercises", exerciseService.getAllExercises());
+
+        // Agregar estadísticas del mes
+        var stats = new java.util.HashMap<String, Integer>();
+        stats.put("routinesStarted", routines.size());
+        stats.put("progressLogged", progressEntries.size());
+        model.addAttribute("stats", stats);
+
         return "dashboard/user";
     }
 
@@ -57,7 +75,7 @@ public class DashboardMvcController {
     public String trainerDashboard(@RequestParam(required = false) String trainerId, Model model) {
         // Redirigir al dashboard específico del entrenador
         if (trainerId != null && !trainerId.isEmpty()) {
-            mongoUserService.getUserById(trainerId).ifPresent(trainer -> {
+            mongoUserService.getUserBySqlUserId(trainerId).ifPresent(trainer -> {
                 model.addAttribute("trainer", trainer);
             });
             return "redirect:/trainer/dashboard?trainerId=" + trainerId;

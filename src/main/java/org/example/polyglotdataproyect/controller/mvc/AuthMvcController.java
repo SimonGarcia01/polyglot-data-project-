@@ -1,5 +1,6 @@
 package org.example.polyglotdataproyect.controller.mvc;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.polyglotdataproyect.entities.User;
 import org.example.polyglotdataproyect.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,24 +30,39 @@ public class AuthMvcController {
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
+                        HttpSession session,
                         RedirectAttributes redirectAttributes) {
 
         User user = authenticationService.login(username, password);
 
         if (user != null) {
+            // Guardar información del usuario en la sesión
+            session.setAttribute("currentUser", username);
+            session.setAttribute("currentUserRole", user.getRole());
+
+            // Extraer el userId para pasarlo al dashboard
+            String userId = authenticationService.extractSqlUserId(user);
+            session.setAttribute("currentUserId", userId);
+
             switch (user.getRole()) {
                 case "ADMIN":
                     return "redirect:/dashboard/admin";
                 case "TRAINER":
-                    return "redirect:/dashboard/trainer";
+                    return "redirect:/dashboard/trainer?trainerId=" + userId;
                 case "STUDENT":
                 case "EMPLOYEE":
                 default:
-                    return "redirect:/dashboard";
+                    return "redirect:/dashboard?userId=" + userId;
             }
         } else {
             redirectAttributes.addFlashAttribute("loginError", true);
             return "redirect:/auth/login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/auth/login";
     }
 }

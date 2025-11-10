@@ -3,14 +3,59 @@
         <a th:href="@{/dashboard}">Polyglot Fitness</a>
     </div>
     <ul class="navbar-nav">
+        <!-- Dashboard - Everyone -->
         <li><a th:href="@{/dashboard}">Dashboard</a></li>
-        <li><a th:href="@{/routines}">My Routines</a></li>
-        <li><a th:href="@{/progress}">My Progress</a></li>
-        <li><a th:href="@{/exercises}">Exercises</a></li>
-        <!-- Trainer-specific links -->
-        <li><a th:href="@{/trainer/assigned-users}">Assigned Users</a></li>
-        <!-- Admin-specific links -->
-        <li><a th:href="@{/admin/assign-trainer}">Assign Trainer</a></li>
-        <li><a th:href="@{/logout}">Logout</a></li>
+
+        <!-- User/Student Links - NOT for EMPLOYEE -->
+        <li th:if="${currentUserRole != null and currentUserRole != 'EMPLOYEE'}">
+            <a th:href="@{/routines}">My Routines</a>
+        </li>
+        <li th:if="${currentUserRole != null and currentUserRole != 'EMPLOYEE'}">
+            <a th:href="@{/progress}">My Progress</a>
+        </li>
+
+        <!-- Exercises - Everyone except EMPLOYEE -->
+        <li th:if="${currentUserRole != null and currentUserRole != 'EMPLOYEE'}">
+            <a th:href="@{/exercises}">Exercises</a>
+        </li>
+
+        <!-- Templates - Students and Trainers -->
+        <li th:if="${currentUserRole == 'STUDENT' or currentUserRole == 'TRAINER'}">
+            <a th:href="@{/routines/templates}">Browse Templates</a>
+        </li>
+
+        <!-- Reports - Everyone except EMPLOYEE -->
+        <li th:if="${currentUserRole != null and currentUserRole != 'EMPLOYEE'}">
+            <a th:href="@{/reports}">📊 Reports</a>
+        </li>
+
+        <!-- Trainer-specific links - Only TRAINER and ADMIN -->
+        <li th:if="${currentUserRole == 'TRAINER' or currentUserRole == 'ADMIN'}">
+            <a th:href="@{/dashboard/trainer(trainerId=${userId})}">Trainer Dashboard</a>
+        </li>
+        <li th:if="${currentUserRole == 'TRAINER' or currentUserRole == 'ADMIN'}">
+            <a th:href="@{/trainer/assigned-users}">Assigned Users</a>
+        </li>
+
+        <!-- Admin-specific links - Only ADMIN -->
+        <li th:if="${currentUserRole == 'ADMIN'}">
+            <a th:href="@{/dashboard/admin}">Admin Dashboard</a>
+        </li>
+        <li th:if="${currentUserRole == 'ADMIN'}">
+            <a th:href="@{/admin/assign-trainer}">Assign Trainer</a>
+        </li>
+        <li th:if="${currentUserRole == 'ADMIN'}">
+            <a th:href="@{/admin/assignments}">View Assignments</a>
+        </li>
+        <li th:if="${currentUserRole == 'ADMIN'}">
+            <a th:href="@{/admin/migrate-data}">Migrate Data</a>
+        </li>
+
+        <!-- User info and Logout - Everyone -->
+        <li th:if="${currentUser != null}" style="margin-left: auto;">
+            <span style="color: #888;">Welcome, <span th:text="${currentUser}">User</span>
+                (<span th:text="${currentUserRole}">Role</span>)</span>
+        </li>
+        <li><a th:href="@{/auth/logout}">Logout</a></li>
     </ul>
 </nav>

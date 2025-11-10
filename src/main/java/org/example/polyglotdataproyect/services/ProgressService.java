@@ -16,6 +16,9 @@ public class ProgressService {
     @Autowired
     private ProgressEntryRepository progressEntryRepository;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     public List<ProgressEntry> getAllProgressEntries() {
         return progressEntryRepository.findAll();
     }
@@ -44,11 +47,12 @@ public class ProgressService {
         newEntry.setCompletedExercises(completedExercises);
         newEntry.setEffortLevel(effortLevel);
 
+        ProgressEntry saved;
         if (existingProgressOpt.isPresent()) {
             // Si ya existe un documento de progreso, agregamos la nueva entrada
             ProgressEntry progressEntry = existingProgressOpt.get();
             progressEntry.getEntries().add(newEntry);
-            return progressEntryRepository.save(progressEntry);
+            saved = progressEntryRepository.save(progressEntry);
         } else {
             // Si no existe, creamos un nuevo documento
             ProgressEntry progressEntry = new ProgressEntry();
@@ -57,24 +61,56 @@ public class ProgressService {
             List<ProgressEntry.Entry> entries = new ArrayList<>();
             entries.add(newEntry);
             progressEntry.setEntries(entries);
-            return progressEntryRepository.save(progressEntry);
+            saved = progressEntryRepository.save(progressEntry);
         }
+
+        // Actualizar estadísticas: incrementar seguimientos
+        statisticsService.incrementProgressLog(userId);
+
+        return saved;
     }
 
-    public ProgressEntry addTrainerFeedback(String userId, String routineId, int entryIndex, String feedback) {
+    public ProgressEntry addTrainerFeedback(String userId, String routineId, int entryIndex, String feedback, String trainerId) {
         Optional<ProgressEntry> progressOpt = progressEntryRepository.findByUserIdAndRoutineId(userId, routineId);
 
         if (progressOpt.isPresent()) {
             ProgressEntry progressEntry = progressOpt.get();
             if (entryIndex >= 0 && entryIndex < progressEntry.getEntries().size()) {
                 progressEntry.getEntries().get(entryIndex).setTrainerFeedback(feedback);
-                return progressEntryRepository.save(progressEntry);
+                ProgressEntry saved = progressEntryRepository.save(progressEntry);
+
+                // Actualizar estadísticas: incrementar feedbacks dados
+                if (trainerId != null) {
+                    statisticsService.incrementFeedbackGiven(trainerId);
+                }
+
+                return saved;
             }
         }
         return null;
     }
 
-    public void deleteProgressEntry(String id) {
+    public void deleteProgressEntry(String id, String currentUserId) {
+        Optional<ProgressEntry> existingOpt = progressEntryRepository.findById(id);
+
+        if (existingOpt.isEmpty()) {
+            throw new RuntimeException("Progress entry not found");
+        }
+
+        ProgressEntry existing = existingOpt.get();
+
+        // Validar ownership: solo el dueño puede eliminar su progreso
+        if (!existing.getUserId().equals(currentUserId)) {
+            throw new RuntimeException("You can only delete your own progress");
+        }
+
+        progressEntryRepository.deleteById(id);
+    }
+
+    /**
+     * Versión sin validación para uso interno/admin
+     */
+    public void deleteProgressEntryById(String id) {
         progressEntryRepository.deleteById(id);
     }
 }

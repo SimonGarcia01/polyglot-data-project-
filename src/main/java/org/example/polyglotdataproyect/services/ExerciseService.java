@@ -42,15 +42,55 @@ public class ExerciseService {
         return exerciseRepository.save(exercise);
     }
 
-    public Exercise updateExercise(String id, Exercise exercise) {
-        if (exerciseRepository.existsById(id)) {
-            exercise.setId(id);
-            return exerciseRepository.save(exercise);
+    public Exercise updateExercise(String id, Exercise exercise, String currentUserId, String currentUserRole) {
+        Optional<Exercise> existingOpt = exerciseRepository.findById(id);
+
+        if (existingOpt.isEmpty()) {
+            throw new RuntimeException("Exercise not found");
         }
-        return null;
+
+        Exercise existing = existingOpt.get();
+
+        // Validar ownership: el creador puede editar, o TRAINER/ADMIN pueden editar cualquiera
+        boolean isCreator = existing.getCreatedBy() != null && existing.getCreatedBy().equals(currentUserId);
+        boolean isTrainerOrAdmin = "TRAINER".equals(currentUserRole) || "ADMIN".equals(currentUserRole);
+
+        if (!isCreator && !isTrainerOrAdmin) {
+            throw new RuntimeException("You can only edit your own exercises or you need to be a trainer/admin");
+        }
+
+        exercise.setId(id);
+        // Preservar createdBy original si no se proporciona
+        if (exercise.getCreatedBy() == null) {
+            exercise.setCreatedBy(existing.getCreatedBy());
+        }
+        return exerciseRepository.save(exercise);
     }
 
-    public void deleteExercise(String id) {
+    public void deleteExercise(String id, String currentUserId, String currentUserRole) {
+        Optional<Exercise> existingOpt = exerciseRepository.findById(id);
+
+        if (existingOpt.isEmpty()) {
+            throw new RuntimeException("Exercise not found");
+        }
+
+        Exercise existing = existingOpt.get();
+
+        // Validar ownership: el creador puede eliminar, o ADMIN puede eliminar cualquiera
+        boolean isCreator = existing.getCreatedBy() != null && existing.getCreatedBy().equals(currentUserId);
+        boolean isAdmin = "ADMIN".equals(currentUserRole);
+
+        if (!isCreator && !isAdmin) {
+            throw new RuntimeException("You can only delete your own exercises or you need to be an admin");
+        }
+
+        exerciseRepository.deleteById(id);
+    }
+
+    /**
+     * Versión sin validación para uso interno/admin
+     */
+    public void deleteExerciseById(String id) {
         exerciseRepository.deleteById(id);
     }
 }
