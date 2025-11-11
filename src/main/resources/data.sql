@@ -42,14 +42,14 @@ INSERT INTO CAMPUSES (code, name, city_code) VALUES
 
 -- 8. Employees
 INSERT INTO EMPLOYEES (id, first_name, last_name, email, contract_type, employee_type, faculty_code, campus_code, birth_place_code) VALUES
-                                                                                                                                        ('1001', 'Juan', 'Pérez', 'juan.perez@univcali.edu.co', 'Planta', 'Docente', 1, 1, 101),
-                                                                                                                                        ('1002', 'María', 'Gómez', 'maria.gomez@univcali.edu.co', 'Planta', 'Administrativo', 1, 2, 102),
-                                                                                                                                        ('1003', 'Carlos', 'López', 'carlos.lopez@univcali.edu.co', 'Cátedra', 'Docente', 2, 1, 103),
-                                                                                                                                        ('1004', 'Carlos', 'Mejía', 'carlos.mejia@univcali.edu.co', 'Planta', 'Docente', 1, 3, 103),
-                                                                                                                                        ('1005', 'Sandra', 'Ortiz', 'sandra.ortiz@univcali.edu.co', 'Cátedra', 'Docente', 2, 4, 104),
-                                                                                                                                        ('1006', 'Julián', 'Reyes', 'julian.reyes@univcali.edu.co', 'Planta', 'Administrativo', 2, 1, 105),
-                                                                                                                                        ('1007', 'Paula', 'Ramírez', 'paula.ramirez@univcali.edu.co', 'Planta', 'Instructor', 1, 1, 101),
-                                                                                                                                        ('1008', 'Andrés', 'Castro', 'andres.castro@univcali.edu.co', 'Cátedra', 'Instructor', 1, 3, 103);
+                                                                                                                                        ('1001', 'Juan', 'Pérez', 'juan.perez@u.icesi.edu.co', 'Planta', 'Docente', 1, 1, 101),
+                                                                                                                                        ('1002', 'María', 'Gómez', 'maria.gomez@u.icesi.edu.co', 'Planta', 'Administrativo', 1, 2, 102),
+                                                                                                                                        ('1003', 'Carlos', 'López', 'carlos.lopez@u.icesi.edu.co', 'Cátedra', 'Docente', 2, 1, 103),
+                                                                                                                                        ('1004', 'Carlos', 'Mejía', 'carlos.mejia@u.icesi.edu.co', 'Planta', 'Docente', 1, 3, 103),
+                                                                                                                                        ('1005', 'Sandra', 'Ortiz', 'sandra.ortiz@u.icesi.edu.co', 'Cátedra', 'Docente', 2, 4, 104),
+                                                                                                                                        ('1006', 'Julián', 'Reyes', 'julian.reyes@u.icesi.edu.co', 'Planta', 'Administrativo', 2, 1, 105),
+                                                                                                                                        ('1007', 'Paula', 'Ramírez', 'paula.ramirez@u.icesi.edu.co', 'Planta', 'Instructor', 1, 1, 101),
+                                                                                                                                        ('1008', 'Andrés', 'Castro', 'andres.castro@u.icesi.edu.co', 'Cátedra', 'Instructor', 1, 3, 103);
 
 -- 9. Update Faculties dean_id
 UPDATE FACULTIES SET dean_id = '1001' WHERE code = 1;
@@ -87,11 +87,11 @@ INSERT INTO GROUPS (NRC, number, semester, subject_code, professor_id) VALUES
 
 -- 14. Students
 INSERT INTO STUDENTS (id, first_name, last_name, email, birth_date, birth_place_code, campus_code) VALUES
-                                                                                                       ('2001', 'Laura', 'Hernández', 'laura.hernandez@univcali.edu.co', '2000-03-15', 101, 1),
-                                                                                                       ('2002', 'Pedro', 'Martínez', 'pedro.martinez@univcali.edu.co', '1999-07-22', 103, 1),
-                                                                                                       ('2003', 'Ana', 'Suárez', 'ana.suarez@univcali.edu.co', '2001-01-05', 102, 2),
-                                                                                                       ('2004', 'Luis', 'Ramírez', 'luis.ramirez@univcali.edu.co', '1998-11-30', 104, 3),
-                                                                                                       ('2005', 'Sofía', 'García', 'sofia.garcia@univcali.edu.co', '2000-09-12', 105, 2);
+                                                                                                       ('2001', 'Laura', 'Hernández', 'laura.hernandez@u.icesi.edu.co', '2000-03-15', 101, 1),
+                                                                                                       ('2002', 'Pedro', 'Martínez', 'pedro.martinez@u.icesi.edu.co', '1999-07-22', 103, 1),
+                                                                                                       ('2003', 'Ana', 'Suárez', 'ana.suarez@u.icesi.edu.co', '2001-01-05', 102, 2),
+                                                                                                       ('2004', 'Luis', 'Ramírez', 'luis.ramirez@u.icesi.edu.co', '1998-11-30', 104, 3),
+                                                                                                       ('2005', 'Sofía', 'García', 'sofia.garcia@u.icesi.edu.co', '2000-09-12', 105, 2);
 
 -- 15. Enrollments
 INSERT INTO ENROLLMENTS (student_id, NRC, enrollment_date, status) VALUES

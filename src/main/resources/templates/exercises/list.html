@@ -16,11 +16,9 @@
             <p><strong>Type:</strong> <span th:text="${exercise.type}">Cardio</span></p>
             <p><strong>Difficulty:</strong> <span th:text="${exercise.difficulty}">Intermediate</span></p>
             <p th:text="${exercise.description}">Description of the exercise.</p>
-            <div th:if="${exercise.videos != null and !exercise.videos.isEmpty()}">
-                <strong>Demo Videos:</strong>
-                <ul>
-                    <li th:each="video : ${exercise.videos}"><a th:href="${video}" target="_blank" th:text="${video}">Watch</a></li>
-                </ul>
+            <div th:if="${exercise.videoUrl != null and !exercise.videoUrl.isEmpty()}">
+                <strong>Demo Video:</strong>
+                <a th:href="${exercise.videoUrl}" target="_blank">Watch Video</a>
             </div>
         </div>
     </div>

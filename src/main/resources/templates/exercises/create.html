@@ -7,7 +7,7 @@
     <div class="container">
         <h1>Add a New Exercise</h1>
         <p>This exercise will be added to the predefined library for all users.</p>
-        <form th:action="@{/exercises}" method="post" class="form-card">
+        <form th:action="@{/exercises/new}" method="post" class="form-card">
             <div class="input-group">
                 <label for="name">Exercise Name</label>
                 <input type="text" id="name" name="name" required>
@@ -33,8 +33,8 @@
                 <textarea id="description" name="description" rows="4"></textarea>
             </div>
             <div class="input-group">
-                <label for="videos">Demo Video URLs (comma-separated)</label>
-                <input type="text" id="videos" name="videos" placeholder="e.g., https://youtu.be/..., https://vimeo.com/...">
+                <label for="videoUrl">Demo Video URL</label>
+                <input type="text" id="videoUrl" name="videoUrl" placeholder="e.g., https://youtu.be/...">
             </div>
 
             <button type="submit" class="btn btn-primary">Save Exercise</button>

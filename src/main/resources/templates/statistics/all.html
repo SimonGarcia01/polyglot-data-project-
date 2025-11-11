@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>All Statistics (Administrator View)</h1>
+        <p>View all user and trainer statistics from the relational database</p>
+
+        <!-- Month and Year selector -->
+        <div class="card">
+            <h2 class="card-title">Select Month and Year</h2>
+            <form method="get" action="/statistics/all">
+                <div class="input-group-row">
+                    <div class="input-group">
+                        <label for="month">Month:</label>
+                        <select id="month" name="month">
+                            <option th:value="1" th:selected="${selectedMonth == 1}">January</option>
+                            <option th:value="2" th:selected="${selectedMonth == 2}">February</option>
+                            <option th:value="3" th:selected="${selectedMonth == 3}">March</option>
+                            <option th:value="4" th:selected="${selectedMonth == 4}">April</option>
+                            <option th:value="5" th:selected="${selectedMonth == 5}">May</option>
+                            <option th:value="6" th:selected="${selectedMonth == 6}">June</option>
+                            <option th:value="7" th:selected="${selectedMonth == 7}">July</option>
+                            <option th:value="8" th:selected="${selectedMonth == 8}">August</option>
+                            <option th:value="9" th:selected="${selectedMonth == 9}">September</option>
+                            <option th:value="10" th:selected="${selectedMonth == 10}">October</option>
+                            <option th:value="11" th:selected="${selectedMonth == 11}">November</option>
+                            <option th:value="12" th:selected="${selectedMonth == 12}">December</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="year">Year:</label>
+                        <select id="year" name="year">
+                            <option th:value="2023" th:selected="${selectedYear == 2023}">2023</option>
+                            <option th:value="2024" th:selected="${selectedYear == 2024}">2024</option>
+                            <option th:value="2025" th:selected="${selectedYear == 2025}">2025</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">View</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- User Statistics Section -->
+        <div class="card">
+            <h2 class="card-title">User Statistics -
+                <span th:switch="${selectedMonth}">
+                    <span th:case="1">January</span>
+                    <span th:case="2">February</span>
+                    <span th:case="3">March</span>
+                    <span th:case="4">April</span>
+                    <span th:case="5">May</span>
+                    <span th:case="6">June</span>
+                    <span th:case="7">July</span>
+                    <span th:case="8">August</span>
+                    <span th:case="9">September</span>
+                    <span th:case="10">October</span>
+                    <span th:case="11">November</span>
+                    <span th:case="12">December</span>
+                </span>
+                <span th:text="${selectedYear}">2025</span>
+            </h2>
+
+            <div th:if="${userStatistics != null and !userStatistics.isEmpty()}">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Routines Started</th>
+                            <th>Progress Logs</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stat : ${userStatistics}">
+                            <td><strong th:text="${stat.userId}">user123</strong></td>
+                            <td th:text="${stat.routinesStarted}">0</td>
+                            <td th:text="${stat.progressLogsCount}">0</td>
+                            <td th:text="${#temporals.format(stat.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td><strong>TOTALS</strong></td>
+                            <td><strong th:text="${#aggregates.sum(userStatistics.![routinesStarted])}">0</strong></td>
+                            <td><strong th:text="${#aggregates.sum(userStatistics.![progressLogsCount])}">0</strong></td>
+                            <td>-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div th:if="${userStatistics == null or userStatistics.isEmpty()}" class="no-data">
+                <p>No user statistics available for this month.</p>
+            </div>
+        </div>
+
+        <!-- Trainer Statistics Section -->
+        <div class="card">
+            <h2 class="card-title">Trainer Statistics -
+                <span th:switch="${selectedMonth}">
+                    <span th:case="1">January</span>
+                    <span th:case="2">February</span>
+                    <span th:case="3">March</span>
+                    <span th:case="4">April</span>
+                    <span th:case="5">May</span>
+                    <span th:case="6">June</span>
+                    <span th:case="7">July</span>
+                    <span th:case="8">August</span>
+                    <span th:case="9">September</span>
+                    <span th:case="10">October</span>
+                    <span th:case="11">November</span>
+                    <span th:case="12">December</span>
+                </span>
+                <span th:text="${selectedYear}">2025</span>
+            </h2>
+
+            <div th:if="${trainerStatistics != null and !trainerStatistics.isEmpty()}">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Trainer ID</th>
+                            <th>New Assignments</th>
+                            <th>Feedbacks Given</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stat : ${trainerStatistics}">
+                            <td><strong th:text="${stat.trainerId}">trainer123</strong></td>
+                            <td th:text="${stat.newAssignmentsCount}">0</td>
+                            <td th:text="${stat.feedbacksGivenCount}">0</td>
+                            <td th:text="${#temporals.format(stat.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td><strong>TOTALS</strong></td>
+                            <td><strong th:text="${#aggregates.sum(trainerStatistics.![newAssignmentsCount])}">0</strong></td>
+                            <td><strong th:text="${#aggregates.sum(trainerStatistics.![feedbacksGivenCount])}">0</strong></td>
+                            <td>-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div th:if="${trainerStatistics == null or trainerStatistics.isEmpty()}" class="no-data">
+                <p>No trainer statistics available for this month.</p>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <a th:href="@{/dashboard/admin}" class="btn btn-secondary">Back to Admin Dashboard</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .input-group-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .input-group-row .input-group {
+            flex: 1;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .stats-table thead {
+            background-color: #343a40;
+            color: white;
+        }
+        .stats-table th, .stats-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .stats-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .stats-table tfoot {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .total-row {
+            border-top: 2px solid #343a40;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</body>
+</html>

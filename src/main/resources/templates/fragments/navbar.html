@@ -29,6 +29,11 @@
             <a th:href="@{/reports}">📊 Reports</a>
         </li>
 
+        <!-- Statistics - Everyone except EMPLOYEE -->
+        <li th:if="${currentUserRole != null and currentUserRole != 'EMPLOYEE'}">
+            <a th:href="@{/statistics}">📈 Statistics</a>
+        </li>
+
         <!-- Trainer-specific links - Only TRAINER and ADMIN -->
         <li th:if="${currentUserRole == 'TRAINER' or currentUserRole == 'ADMIN'}">
             <a th:href="@{/dashboard/trainer(trainerId=${userId})}">Trainer Dashboard</a>
