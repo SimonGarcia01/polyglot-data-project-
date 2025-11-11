@@ -41,14 +41,28 @@ public class ProgressMvcController {
     }
 
     @GetMapping("/log")
-    public String logProgressForm(Model model,
+    public String logProgressForm(HttpSession session,
+                                 Model model,
                                  @RequestParam(required = false) String userId,
                                  @RequestParam(required = false) String routineId) {
-        model.addAttribute("userId", userId);
+        // Get userId from parameter or session
+        String currentUserId = userId != null ? userId : (String) session.getAttribute("currentUserId");
+
+        model.addAttribute("currentUser", session.getAttribute("currentUser"));
+        model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
+        model.addAttribute("userId", currentUserId);
         model.addAttribute("routineId", routineId);
-        if (routineId != null && !routineId.isEmpty()) {
-            model.addAttribute("routine", routineService.getRoutineById(routineId).orElse(null));
+
+        // Get user's routines for the dropdown
+        if (currentUserId != null) {
+            model.addAttribute("userRoutines", routineService.getRoutinesByOwner(currentUserId));
         }
+
+        // Pre-select routine if provided
+        if (routineId != null && !routineId.isEmpty()) {
+            model.addAttribute("selectedRoutine", routineService.getRoutineById(routineId).orElse(null));
+        }
+
         return "progress/log";
     }
 

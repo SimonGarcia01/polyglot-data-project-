@@ -53,7 +53,7 @@
                     <div class="card-actions">
                         <a th:href="@{/routines/{id}(id=${routine.id})}" class="btn btn-sm btn-secondary">View Details</a>
                         <form th:action="@{/routines/{id}/copy(id=${routine.id})}" method="post" style="display: inline;">
-                            <input type="hidden" name="userId" th:value="${userId}">
+                            <input type="hidden" name="newOwnerId" th:value="${userId}">
                             <button type="submit" class="btn btn-sm btn-primary">Copy to My Routines</button>
                         </form>
                     </div>

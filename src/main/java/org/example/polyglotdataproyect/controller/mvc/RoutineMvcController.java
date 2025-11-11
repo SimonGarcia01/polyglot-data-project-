@@ -80,11 +80,21 @@ public class RoutineMvcController {
     }
 
     @GetMapping("/{id}")
-    public String viewRoutine(@PathVariable String id, Model model) {
+    public String viewRoutine(@PathVariable String id, HttpSession session, Model model) {
         Optional<Routine> routine = routineService.getRoutineById(id);
         if (routine.isPresent()) {
+            // Create a map of exercises for easy lookup
+            var allExercises = exerciseService.getAllExercises();
+            var exerciseMap = new java.util.HashMap<String, org.example.polyglotdataproyect.entities.Exercise>();
+            for (var exercise : allExercises) {
+                exerciseMap.put(exercise.getId(), exercise);
+            }
+
             model.addAttribute("routine", routine.get());
-            model.addAttribute("allExercises", exerciseService.getAllExercises());
+            model.addAttribute("exerciseMap", exerciseMap);
+            model.addAttribute("currentUser", session.getAttribute("currentUser"));
+            model.addAttribute("currentUserRole", session.getAttribute("currentUserRole"));
+            model.addAttribute("userId", session.getAttribute("currentUserId"));
             return "routines/view";
         }
         return "redirect:/routines";

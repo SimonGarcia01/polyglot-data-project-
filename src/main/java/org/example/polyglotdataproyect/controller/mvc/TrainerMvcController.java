@@ -169,13 +169,24 @@ public class TrainerMvcController {
             return "redirect:/trainer/dashboard";
         }
 
-        List<ProgressEntry> progressEntries = progressService.getProgressEntriesByUser(userId);
-        Optional<MongoUser> user = mongoUserService.getUserById(userId);
+        // userId is MongoDB ID, need to get the sqlUserId for progress lookup
+        Optional<MongoUser> userOpt = mongoUserService.getUserById(userId);
+        if (userOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
+            return "redirect:/trainer/dashboard";
+        }
+
+        MongoUser user = userOpt.get();
+        String sqlUserId = user.getSqlUserId();
+
+        // Get progress using SQL user ID
+        List<ProgressEntry> progressEntries = progressService.getProgressEntriesByUser(sqlUserId);
 
         model.addAttribute("currentUser", session.getAttribute("currentUser"));
         model.addAttribute("currentUserRole", currentUserRole);
         model.addAttribute("progressEntries", progressEntries);
-        model.addAttribute("user", user.orElse(null));
+        model.addAttribute("user", user);
+        model.addAttribute("userId", sqlUserId);  // Pass SQL user ID for templates
         model.addAttribute("trainerId", trainerId);
 
         return "trainer/user-progress";
@@ -199,11 +210,21 @@ public class TrainerMvcController {
             return "redirect:/trainer/dashboard";
         }
 
-        Optional<MongoUser> user = mongoUserService.getUserById(userId);
+        // userId is MongoDB ID, need to get the sqlUserId for routines lookup
+        Optional<MongoUser> userOpt = mongoUserService.getUserById(userId);
+        if (userOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Usuario no encontrado.");
+            return "redirect:/trainer/dashboard";
+        }
+
+        MongoUser user = userOpt.get();
+        String sqlUserId = user.getSqlUserId();
+
         model.addAttribute("currentUser", session.getAttribute("currentUser"));
         model.addAttribute("currentUserRole", currentUserRole);
-        model.addAttribute("user", user.orElse(null));
-        model.addAttribute("routines", routineService.getRoutinesByOwner(userId));
+        model.addAttribute("user", user);
+        model.addAttribute("routines", routineService.getRoutinesByOwner(sqlUserId));
+        model.addAttribute("userId", sqlUserId);  // Pass SQL user ID for templates
         return "trainer/user-routines";
     }
 

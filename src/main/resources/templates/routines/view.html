@@ -6,30 +6,250 @@
 
     <div class="container">
         <div class="page-header">
-            <h1>My Routines</h1>
-            <a th:href="@{/routines/new}" class="btn btn-primary">Create New Routine</a>
-        </div>
-
-        <div class="card" th:each="routine : ${routines}">
-            <h2 class="card-title" th:text="${routine.name}">Routine Name</h2>
-            <p th:text="${routine.description}">Routine description goes here.</p>
-            <div class="routine-actions">
-                <a th:href="@{/progress/log(routineId=${routine.id})}" class="btn btn-primary">Start Workout</a>
-                <a th:href="@{/routines/edit/{id}(id=${routine.id})}" class="btn btn-secondary">Edit</a>
+            <h1 th:text="${routine.name}">Routine Name</h1>
+            <div>
+                <a th:href="@{/routines}" class="btn btn-secondary">← Back to My Routines</a>
+                <a th:if="${routine.ownerId == userId}"
+                   th:href="@{/routines/{id}/edit(id=${routine.id})}"
+                   class="btn btn-primary">Edit Routine</a>
             </div>
         </div>
 
-        <div class="card" th:if="${#lists.isEmpty(routines)}">
-            <p>You don't have any routines yet. Try creating one or adopting a predefined routine!</p>
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Routine Info Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Routine Information</h2>
+                <span th:if="${routine.isTemplate}" class="badge badge-template">Template</span>
+                <span th:unless="${routine.isTemplate}" class="badge badge-personal">Personal</span>
+            </div>
+            <div class="card-body">
+                <div class="routine-info">
+                    <p><strong>Created:</strong> <span th:text="${#dates.format(routine.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span></p>
+                    <p><strong>Total Exercises:</strong> <span th:text="${routine.exercises != null ? routine.exercises.size() : 0}">0</span></p>
+                    <p th:if="${routine.copiedFrom != null}">
+                        <strong>Copied from:</strong> Template Routine
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="routine-actions" style="margin-top: 1rem;">
+                    <a th:href="@{/progress/log(routineId=${routine.id})}" class="btn btn-primary">
+                        Start Workout
+                    </a>
+                    <a th:href="@{/progress/history(userId=${userId})}" class="btn btn-secondary">
+                        View Progress History
+                    </a>
+                </div>
+            </div>
         </div>
 
+        <!-- Exercises List -->
         <div class="card">
-            <h2>Looking for inspiration?</h2>
-            <p>Check out our predefined routines designed by expert trainers.</p>
-            <a th:href="@{/routines/predefined}" class="btn btn-secondary">Browse Predefined Routines</a>
+            <div class="card-header">
+                <h2 class="card-title">Exercises in this Routine</h2>
+            </div>
+            <div class="card-body">
+                <div th:if="${routine.exercises != null and !routine.exercises.empty}">
+                    <div th:each="exerciseInRoutine, iterStat : ${routine.exercises}" class="exercise-item">
+                        <div class="exercise-card">
+                            <!-- Find the full exercise details from exerciseMap -->
+                            <div th:with="exercise=${exerciseMap.get(exerciseInRoutine.exerciseId)}">
+                                <div class="exercise-header">
+                                    <h3 class="exercise-number">
+                                        Exercise <span th:text="${iterStat.count}">1</span>
+                                    </h3>
+                                    <div class="exercise-badges">
+                                        <span th:if="${exercise != null}"
+                                              class="badge"
+                                              th:classappend="${exercise.type == 'cardio' ? 'badge-cardio' : (exercise.type == 'fuerza' ? 'badge-strength' : 'badge-mobility')}"
+                                              th:text="${exercise.type}">Type</span>
+                                        <span th:if="${exercise != null}"
+                                              class="badge"
+                                              th:classappend="${exercise.difficulty == 'baja' ? 'badge-easy' : (exercise.difficulty == 'media' ? 'badge-medium' : 'badge-hard')}"
+                                              th:text="${exercise.difficulty}">Difficulty</span>
+                                    </div>
+                                </div>
+
+                                <div th:if="${exercise != null}" class="exercise-details">
+                                    <h4 th:text="${exercise.name}">Exercise Name</h4>
+                                    <p class="exercise-description" th:text="${exercise.description}">Description</p>
+
+                                    <!-- Exercise Parameters -->
+                                    <div class="exercise-parameters">
+                                        <div th:if="${exerciseInRoutine.sets != null}" class="parameter">
+                                            <strong>Sets:</strong> <span th:text="${exerciseInRoutine.sets}">0</span>
+                                        </div>
+                                        <div th:if="${exerciseInRoutine.reps != null}" class="parameter">
+                                            <strong>Reps:</strong> <span th:text="${exerciseInRoutine.reps}">0</span>
+                                        </div>
+                                        <div th:if="${exerciseInRoutine.durationMin != null}" class="parameter">
+                                            <strong>Duration:</strong> <span th:text="${exerciseInRoutine.durationMin}">0</span> minutes
+                                        </div>
+                                        <div th:if="${exercise.durationMin != null}" class="parameter">
+                                            <strong>Recommended Duration:</strong> <span th:text="${exercise.durationMin}">0</span> minutes
+                                        </div>
+                                    </div>
+
+                                    <!-- Video Demo -->
+                                    <div th:if="${exercise.videoUrl != null and !exercise.videoUrl.isEmpty()}" class="video-demo">
+                                        <strong>Video Demonstration:</strong>
+                                        <div class="video-container">
+                                            <iframe th:src="${exercise.videoUrl}"
+                                                    width="100%"
+                                                    height="315"
+                                                    frameborder="0"
+                                                    allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- If exercise not found -->
+                                <div th:if="${exercise == null}" class="alert alert-error">
+                                    <p>Exercise details not found (ID: <span th:text="${exerciseInRoutine.exerciseId}">ID</span>)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No exercises message -->
+                <div th:if="${routine.exercises == null or routine.exercises.empty}" class="alert alert-info">
+                    <p>This routine doesn't have any exercises yet.</p>
+                    <a th:if="${routine.ownerId == userId}"
+                       th:href="@{/routines/{id}/edit(id=${routine.id})}"
+                       class="btn btn-primary">Add Exercises</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Option (only for owner) -->
+        <div th:if="${routine.ownerId == userId and !routine.isTemplate}" class="card danger-zone">
+            <h3>Danger Zone</h3>
+            <p>Once you delete this routine, there is no going back. Please be certain.</p>
+            <form th:action="@{/routines/{id}/delete(id=${routine.id})}" method="post"
+                  onsubmit="return confirm('Are you sure you want to delete this routine? This action cannot be undone.');">
+                <button type="submit" class="btn btn-danger">Delete Routine</button>
+            </form>
         </div>
     </div>
 
     <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .exercise-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .exercise-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            background: #f9f9f9;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .exercise-number {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .exercise-badges {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-cardio { background: #e3f2fd; color: #1565c0; }
+        .badge-strength { background: #fce4ec; color: #c2185b; }
+        .badge-mobility { background: #f3e5f5; color: #7b1fa2; }
+        .badge-easy { background: #e8f5e9; color: #2e7d32; }
+        .badge-medium { background: #fff3e0; color: #ef6c00; }
+        .badge-hard { background: #ffebee; color: #c62828; }
+        .badge-template { background: #e1f5fe; color: #0277bd; }
+        .badge-personal { background: #f1f8e9; color: #558b2f; }
+
+        .exercise-details h4 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #222;
+        }
+
+        .exercise-description {
+            color: #666;
+            line-height: 1.6;
+            margin: 1rem 0;
+        }
+
+        .exercise-parameters {
+            display: flex;
+            gap: 2rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .parameter {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .parameter strong {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .parameter span {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .video-demo {
+            margin-top: 1.5rem;
+        }
+
+        .video-container {
+            margin-top: 0.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .routine-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .danger-zone {
+            border: 2px solid #dc3545;
+            background: #fff5f5;
+        }
+
+        .danger-zone h3 {
+            color: #dc3545;
+        }
+    </style>
 </body>
 </html>
