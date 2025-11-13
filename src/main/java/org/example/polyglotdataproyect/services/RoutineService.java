@@ -49,6 +49,9 @@ public class RoutineService {
         if (routine.getIsTemplate() == null) {
             routine.setIsTemplate(false);
         }
+        if (routine.getExercises() == null) {
+            routine.setExercises(new java.util.ArrayList<>());
+        }
         Routine saved = routineRepository.save(routine);
 
         // Actualizar estadísticas: incrementar rutinas iniciadas
@@ -68,7 +71,8 @@ public class RoutineService {
             copiedRoutine.setOwnerId(newOwnerId);
             copiedRoutine.setIsTemplate(false);
             copiedRoutine.setCopiedFrom(routineId);
-            copiedRoutine.setExercises(originalRoutine.getExercises());
+            copiedRoutine.setExercises(originalRoutine.getExercises() != null ?
+                originalRoutine.getExercises() : new java.util.ArrayList<>());
             copiedRoutine.setCreatedAt(new Date());
             Routine saved = routineRepository.save(copiedRoutine);
 
@@ -97,6 +101,10 @@ public class RoutineService {
         routine.setId(id);
         // Preservar ownerId original
         routine.setOwnerId(existing.getOwnerId());
+        // Asegurar que exercises nunca sea null
+        if (routine.getExercises() == null) {
+            routine.setExercises(new java.util.ArrayList<>());
+        }
         return routineRepository.save(routine);
     }
 

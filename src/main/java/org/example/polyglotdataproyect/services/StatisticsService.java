@@ -33,6 +33,7 @@ public class StatisticsService {
 
         UserStatistics stats = getOrCreateUserStatistics(userId, month, year);
         stats.setRoutinesStarted(stats.getRoutinesStarted() + 1);
+        stats.setUpdatedAt(LocalDateTime.now());
         userStatisticsRepository.save(stats);
     }
 
@@ -47,6 +48,7 @@ public class StatisticsService {
 
         UserStatistics stats = getOrCreateUserStatistics(userId, month, year);
         stats.setProgressLogsCount(stats.getProgressLogsCount() + 1);
+        stats.setUpdatedAt(LocalDateTime.now());
         userStatisticsRepository.save(stats);
     }
 
@@ -61,6 +63,7 @@ public class StatisticsService {
 
         TrainerStatistics stats = getOrCreateTrainerStatistics(trainerId, month, year);
         stats.setNewAssignmentsCount(stats.getNewAssignmentsCount() + 1);
+        stats.setUpdatedAt(LocalDateTime.now());
         trainerStatisticsRepository.save(stats);
     }
 
@@ -75,6 +78,7 @@ public class StatisticsService {
 
         TrainerStatistics stats = getOrCreateTrainerStatistics(trainerId, month, year);
         stats.setFeedbacksGivenCount(stats.getFeedbacksGivenCount() + 1);
+        stats.setUpdatedAt(LocalDateTime.now());
         trainerStatisticsRepository.save(stats);
     }
 

@@ -85,7 +85,7 @@
     </div>
 
     <script>
-        let exerciseCount = /*[[${routine != null ? routine.exercises.size() : 0}]]*/ 0;
+        let exerciseCount = /*[[${routine != null && routine.exercises != null ? routine.exercises.size() : 0}]]*/ 0;
 
         function addExercise() {
             const container = document.getElementById('exercisesList');
