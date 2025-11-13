@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Edit Exercise</h1>
+        <a th:href="@{/exercises/{id}(id=${exercise.id})}" class="btn btn-secondary">← Back to Exercise</a>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form th:if="${exercise != null}" th:action="@{/exercises/{id}/edit(id=${exercise.id})}" method="post" class="form-card">
+            <div class="input-group">
+                <label for="name">Exercise Name *</label>
+                <input type="text" id="name" name="name" th:value="${exercise.name}" required>
+            </div>
+
+            <div class="input-group">
+                <label for="type">Type *</label>
+                <select id="type" name="type" required>
+                    <option value="cardio" th:selected="${exercise.type == 'cardio'}">Cardio</option>
+                    <option value="fuerza" th:selected="${exercise.type == 'fuerza'}">Fuerza</option>
+                    <option value="movilidad" th:selected="${exercise.type == 'movilidad'}">Movilidad</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="difficulty">Difficulty *</label>
+                <select id="difficulty" name="difficulty" required>
+                    <option value="beginner" th:selected="${exercise.difficulty == 'beginner'}">Beginner</option>
+                    <option value="intermediate" th:selected="${exercise.difficulty == 'intermediate'}">Intermediate</option>
+                    <option value="advanced" th:selected="${exercise.difficulty == 'advanced'}">Advanced</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" th:text="${exercise.description}"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="durationMin">Duration (minutes)</label>
+                <input type="number" id="durationMin" name="durationMin" th:value="${exercise.durationMin}" min="1">
+            </div>
+
+            <div class="input-group">
+                <label for="videoUrl">Demo Video URL</label>
+                <input type="url" id="videoUrl" name="videoUrl" th:value="${exercise.videoUrl}"
+                       placeholder="https://www.youtube.com/watch?v=...">
+                <small>Paste a YouTube, Vimeo, or other video URL</small>
+            </div>
+
+            <input type="hidden" name="createdBy" th:value="${exercise.createdBy}">
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a th:href="@{/exercises/{id}(id=${exercise.id})}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+
+        <!-- Exercise Not Found -->
+        <div class="card" th:if="${exercise == null}">
+            <h2 class="card-title">Exercise Not Found</h2>
+            <p>The exercise you're trying to edit doesn't exist.</p>
+            <a th:href="@{/exercises}" class="btn btn-primary">Back to Exercise Library</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

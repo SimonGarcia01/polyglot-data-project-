@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Create a New Routine</h1>
+        <form th:action="@{/routines/new}" method="post" class="form-card">
+            <div class="input-group">
+                <label for="name">Routine Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="input-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+
+            <div class="input-group">
+                <h3>Select Exercises</h3>
+                <!-- This would be a dynamic list, maybe with search/filter capabilities -->
+                <div class="exercise-selection-list">
+                    <div th:each="exercise : ${exercises}">
+                        <input type="checkbox" name="exerciseIds" th:value="${exercise.id}" th:id="|exec_${exercise.id}|">
+                        <label th:for="|exec_${exercise.id}|" th:text="${exercise.name}">Exercise Name</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Routine</button>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

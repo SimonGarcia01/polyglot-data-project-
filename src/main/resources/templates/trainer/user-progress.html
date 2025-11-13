@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 th:text="|Progress Tracking - ${user.name}|">Progress for User</h1>
+            <a th:href="@{/trainer/dashboard}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- User Info Card -->
+        <div class="card user-info-card">
+            <h2 class="card-title">Student Information</h2>
+            <div class="user-details">
+                <p><strong>Name:</strong> <span th:text="${user.name}">Student Name</span></p>
+                <p><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
+                <p><strong>Role:</strong> <span th:text="${user.role}">Student</span></p>
+                <p><strong>Total Progress Entries:</strong> <span th:text="${progressEntries != null ? progressEntries.size() : 0}">0</span></p>
+            </div>
+        </div>
+
+        <!-- Progress Entries -->
+        <div th:if="${progressEntries != null and !progressEntries.empty}">
+            <h2>Workout Progress History</h2>
+            <div th:each="progressEntry : ${progressEntries}" class="progress-routine-card">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Routine Progress</h2>
+                        <span class="badge">Total Workouts: <span th:text="${progressEntry.entries != null ? progressEntry.entries.size() : 0}">0</span></span>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Routine ID:</strong> <span th:text="${progressEntry.routineId}">Routine</span></p>
+
+                        <!-- All entries with feedback options -->
+                        <div th:if="${progressEntry.entries != null and !progressEntry.entries.empty}" class="entries-section">
+                            <h3>All Workout Sessions:</h3>
+                            <div th:each="entry, iterStat : ${progressEntry.entries}" class="entry-card">
+                                <div class="entry-header">
+                                    <span class="entry-number" th:text="${'Session #' + (iterStat.index + 1)}">Session 1</span>
+                                    <span class="entry-date" th:text="${#dates.format(entry.date, 'MMMM dd, yyyy HH:mm')}">Date</span>
+                                </div>
+
+                                <div class="entry-details">
+                                    <div class="detail-item">
+                                        <strong>Exercises Completed:</strong>
+                                        <span th:text="${entry.completedExercises}">0</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong>Effort Level:</strong>
+                                        <span class="effort-badge"
+                                              th:classappend="${entry.effortLevel <= 3 ? 'effort-low' : (entry.effortLevel <= 7 ? 'effort-medium' : 'effort-high')}"
+                                              th:text="${entry.effortLevel + '/10'}">5/10</span>
+                                    </div>
+                                </div>
+
+                                <!-- Trainer Feedback Section -->
+                                <div class="feedback-section">
+                                    <div th:if="${entry.trainerFeedback != null and !entry.trainerFeedback.isEmpty()}" class="existing-feedback">
+                                        <strong>Your Feedback:</strong>
+                                        <p th:text="${entry.trainerFeedback}">Existing feedback</p>
+                                    </div>
+
+                                    <!-- Feedback Form -->
+                                    <form th:action="@{/progress/{id}/feedback(id=${progressEntry.id})}" method="post" class="feedback-form">
+                                        <input type="hidden" name="userId" th:value="${userId}" />
+                                        <input type="hidden" name="routineId" th:value="${progressEntry.routineId}" />
+                                        <input type="hidden" name="entryIndex" th:value="${iterStat.index}" />
+                                        <div class="input-group">
+                                            <label th:for="${'feedback-' + iterStat.index}">
+                                                <span th:if="${entry.trainerFeedback == null or entry.trainerFeedback.isEmpty()}">Add Feedback:</span>
+                                                <span th:if="${entry.trainerFeedback != null and !entry.trainerFeedback.isEmpty()}">Update Feedback:</span>
+                                            </label>
+                                            <textarea th:id="${'feedback-' + iterStat.index}"
+                                                      name="feedback"
+                                                      rows="3"
+                                                      placeholder="Provide constructive feedback or encouragement..."
+                                                      th:text="${entry.trainerFeedback}"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <span th:if="${entry.trainerFeedback == null or entry.trainerFeedback.isEmpty()}">Add Feedback</span>
+                                            <span th:if="${entry.trainerFeedback != null and !entry.trainerFeedback.isEmpty()}">Update Feedback</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="card" th:if="${progressEntries == null or progressEntries.empty}">
+            <div class="empty-state">
+                <h2>No Progress Yet</h2>
+                <p th:text="|${user.name} hasn't logged any workout progress yet.|">Student hasn't logged any workout progress yet.</p>
+                <p>Encourage them to start tracking their fitness journey!</p>
+            </div>
+        </div>
+
+        <!-- Tips for Trainers -->
+        <div class="card info-card">
+            <h3>Trainer Tips</h3>
+            <ul>
+                <li><strong>Be Encouraging:</strong> Positive feedback motivates students</li>
+                <li><strong>Be Specific:</strong> Reference particular exercises or metrics</li>
+                <li><strong>Set Goals:</strong> Suggest incremental improvements</li>
+                <li><strong>Monitor Effort:</strong> High effort levels consistently may indicate overtraining</li>
+                <li><strong>Follow Up:</strong> Check in regularly on progress trends</li>
+            </ul>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .user-info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .user-info-card .card-title {
+            color: white;
+        }
+
+        .user-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .user-details p {
+            margin: 0;
+        }
+
+        .progress-routine-card {
+            margin-bottom: 2rem;
+        }
+
+        .entries-section {
+            margin-top: 1.5rem;
+        }
+
+        .entries-section h3 {
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+
+        .entry-card {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 6px;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .entry-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #007bff;
+        }
+
+        .entry-date {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .entry-details {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .effort-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .effort-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .effort-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .effort-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .feedback-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .existing-feedback {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .existing-feedback strong {
+            color: #007bff;
+        }
+
+        .existing-feedback p {
+            margin: 0.5rem 0 0 0;
+            line-height: 1.6;
+        }
+
+        .feedback-form {
+            margin-top: 1rem;
+        }
+
+        .feedback-form .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .feedback-form label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .feedback-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .feedback-form textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state h2 {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+        }
+
+        .info-card h3 {
+            margin-top: 0;
+            color: #28a745;
+        }
+
+        .info-card ul {
+            margin-bottom: 0;
+            padding-left: 1.5rem;
+        }
+
+        .info-card li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .badge {
+            background: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+    </style>
+</body>
+</html>

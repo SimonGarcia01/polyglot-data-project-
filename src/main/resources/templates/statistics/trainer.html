@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Trainer Statistics</h1>
+        <p>View your training activity statistics from the relational database</p>
+
+        <!-- Year selector -->
+        <div class="card">
+            <h2 class="card-title">Select Year</h2>
+            <form method="get" action="/statistics/trainer">
+                <div class="input-group">
+                    <label for="year">Year:</label>
+                    <select id="year" name="year" onchange="this.form.submit()">
+                        <option th:value="2023" th:selected="${selectedYear == 2023}">2023</option>
+                        <option th:value="2024" th:selected="${selectedYear == 2024}">2024</option>
+                        <option th:value="2025" th:selected="${selectedYear == 2025}">2025</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2 class="card-title">Total New Assignments</h2>
+                <p class="stat-number" th:text="${totalAssignments}">0</p>
+                <p class="stat-label">in <span th:text="${selectedYear}">2025</span></p>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Total Feedbacks Given</h2>
+                <p class="stat-number" th:text="${totalFeedbacks}">0</p>
+                <p class="stat-label">in <span th:text="${selectedYear}">2025</span></p>
+            </div>
+        </div>
+
+        <!-- Monthly breakdown -->
+        <div class="card">
+            <h2 class="card-title">Monthly Breakdown - <span th:text="${selectedYear}">2025</span></h2>
+
+            <div th:if="${statistics != null and !statistics.isEmpty()}">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>New Assignments</th>
+                            <th>Feedbacks Given</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="stat : ${statistics}">
+                            <td>
+                                <span th:switch="${stat.month}">
+                                    <span th:case="1">January</span>
+                                    <span th:case="2">February</span>
+                                    <span th:case="3">March</span>
+                                    <span th:case="4">April</span>
+                                    <span th:case="5">May</span>
+                                    <span th:case="6">June</span>
+                                    <span th:case="7">July</span>
+                                    <span th:case="8">August</span>
+                                    <span th:case="9">September</span>
+                                    <span th:case="10">October</span>
+                                    <span th:case="11">November</span>
+                                    <span th:case="12">December</span>
+                                </span>
+                            </td>
+                            <td><strong th:text="${stat.newAssignmentsCount}">0</strong></td>
+                            <td><strong th:text="${stat.feedbacksGivenCount}">0</strong></td>
+                            <td th:text="${#temporals.format(stat.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${statistics == null or statistics.isEmpty()}" class="no-data">
+                <p>No statistics available for <span th:text="${selectedYear}">this year</span>.</p>
+                <p>Start assigning routines and giving feedback to see your statistics here!</p>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <a th:href="@{/trainer/dashboard(trainerId=${userId})}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #28a745;
+            margin: 10px 0;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .stats-table thead {
+            background-color: #f8f9fa;
+        }
+        .stats-table th, .stats-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .stats-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</body>
+</html>

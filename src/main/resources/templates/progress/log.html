@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Log Your Progress</h1>
+            <a th:href="@{/routines}" class="btn btn-secondary">← Back to Routines</a>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <div class="card">
+            <h2 class="card-title">Record Your Workout Progress</h2>
+            <form th:action="@{/progress/log}" method="post" class="progress-form">
+                <!-- Hidden userId field -->
+                <input type="hidden" name="userId" th:value="${userId}">
+
+                <div class="input-group">
+                    <label for="routineId">Select Routine *</label>
+                    <select id="routineId" name="routineId" required>
+                        <option value="">-- Choose a routine --</option>
+                        <option th:each="routine : ${userRoutines}"
+                                th:value="${routine.id}"
+                                th:text="${routine.name}"
+                                th:selected="${routineId != null and routineId == routine.id}">
+                            Routine Name
+                        </option>
+                    </select>
+                    <small class="form-help">Select the routine you completed</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="completedExercises">Exercises Completed *</label>
+                    <input type="number"
+                           id="completedExercises"
+                           name="completedExercises"
+                           min="0"
+                           placeholder="e.g., 8"
+                           required>
+                    <small class="form-help">How many exercises did you complete?</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="effortLevel">Effort Level (1-10) *</label>
+                    <input type="range"
+                           id="effortLevel"
+                           name="effortLevel"
+                           min="1"
+                           max="10"
+                           value="5"
+                           oninput="this.nextElementSibling.textContent = this.value"
+                           required>
+                    <output>5</output>
+                    <small class="form-help">1 = Very Easy, 10 = Maximum Effort</small>
+                </div>
+
+                <div class="effort-scale">
+                    <div class="scale-labels">
+                        <span>Very Easy</span>
+                        <span>Moderate</span>
+                        <span>Very Hard</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Progress</button>
+                <a th:href="@{/progress(userId=${userId})}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+
+        <!-- Info Card -->
+        <div class="card info-card">
+            <h3>Tips for Logging Progress</h3>
+            <ul>
+                <li><strong>Be consistent:</strong> Log your progress after every workout</li>
+                <li><strong>Be honest:</strong> Rate your effort level accurately</li>
+                <li><strong>Track completion:</strong> Count only fully completed exercises</li>
+                <li><strong>Review regularly:</strong> Check your progress history to see improvements</li>
+            </ul>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .progress-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group select,
+        .input-group input[type="number"] {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .input-group select:focus,
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .input-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, #4caf50, #ffc107, #f44336);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group output {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f0f8ff;
+            border-radius: 6px;
+            min-width: 50px;
+        }
+
+        .form-help {
+            color: #666;
+            font-size: 0.875rem;
+            font-style: italic;
+        }
+
+        .effort-scale {
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: #666;
+            padding: 0 0.25rem;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+
+        .info-card h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        .info-card ul {
+            margin-bottom: 0;
+            padding-left: 1.5rem;
+        }
+
+        .info-card li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            margin-right: 0.5rem;
+        }
+    </style>
+</body>
+</html>

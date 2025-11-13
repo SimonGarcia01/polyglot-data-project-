@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Template Routines</h1>
+            <a th:href="@{/routines}" class="btn btn-secondary">← Back to My Routines</a>
+        </div>
+
+        <p class="page-description">
+            Browse our collection of expert-designed template routines. Copy any template to your personal routines and customize it to your needs!
+        </p>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Template Routines Grid -->
+        <div class="routines-grid" th:if="${templateRoutines != null and !templateRoutines.empty}">
+            <div th:each="routine : ${templateRoutines}" class="routine-card">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title" th:text="${routine.name}">Template Routine Name</h2>
+                        <span class="badge badge-template">Template</span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="routine-info">
+                            <p><strong>Exercises:</strong> <span th:text="${routine.exercises != null ? routine.exercises.size() : 0}">0</span></p>
+                            <p><strong>Created:</strong> <span th:text="${#dates.format(routine.createdAt, 'dd/MM/yyyy')}">Date</span></p>
+                            <p th:if="${routine.ownerId != null}"><strong>Created by:</strong> Expert Trainer</p>
+                        </div>
+
+                        <div class="exercise-preview" th:if="${routine.exercises != null and !routine.exercises.empty}">
+                            <p><strong>Includes:</strong></p>
+                            <ul class="exercise-list-compact">
+                                <li th:each="ex, iterStat : ${routine.exercises}" th:if="${iterStat.index < 5}">
+                                    <span th:text="${'Exercise ' + (iterStat.index + 1)}">Exercise</span>
+                                    <span th:if="${ex.sets != null}"> - <span th:text="${ex.sets}">0</span> sets</span>
+                                    <span th:if="${ex.reps != null}"> × <span th:text="${ex.reps}">0</span> reps</span>
+                                    <span th:if="${ex.durationMin != null}"> - <span th:text="${ex.durationMin}">0</span> min</span>
+                                </li>
+                                <li th:if="${routine.exercises.size() > 5}">
+                                    <em th:text="'+ ' + (routine.exercises.size() - 5) + ' more exercises'">+ more</em>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <a th:href="@{/routines/{id}(id=${routine.id})}" class="btn btn-sm btn-secondary">View Details</a>
+                        <form th:action="@{/routines/{id}/copy(id=${routine.id})}" method="post" style="display: inline;">
+                            <input type="hidden" name="newOwnerId" th:value="${userId}">
+                            <button type="submit" class="btn btn-sm btn-primary">Copy to My Routines</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Templates Message -->
+        <div class="card" th:if="${templateRoutines == null or templateRoutines.empty}">
+            <h2 class="card-title">No Template Routines Available</h2>
+            <p>There are no template routines available yet. Check back later or create your own routine!</p>
+            <a th:href="@{/routines/new}" class="btn btn-primary">Create New Routine</a>
+        </div>
+
+        <!-- Info Card -->
+        <div class="card info-card">
+            <h3>About Template Routines</h3>
+            <p>Template routines are professionally designed workout programs created by certified trainers. When you copy a template:</p>
+            <ul>
+                <li>You get your own personalized copy that you can modify</li>
+                <li>Changes you make won't affect the original template</li>
+                <li>You can adjust sets, reps, and duration to match your fitness level</li>
+                <li>The routine will appear in your "My Routines" section</li>
+            </ul>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

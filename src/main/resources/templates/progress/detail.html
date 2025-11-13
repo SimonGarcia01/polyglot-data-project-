@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Progress Detail</h1>
+        <a th:href="@{/progress}" class="btn btn-secondary">← Back to Progress</a>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <div th:if="${progressEntry != null}" class="progress-detail">
+            <!-- Routine Information -->
+            <div class="card">
+                <h2 class="card-title">Routine Information</h2>
+                <div th:if="${routine != null}">
+                    <p><strong>Routine Name:</strong> <span th:text="${routine.name}">Routine Name</span></p>
+                    <p><strong>Total Exercises:</strong> <span th:text="${routine.exercises != null ? routine.exercises.size() : 0}">0</span></p>
+                </div>
+                <div th:if="${routine == null}">
+                    <p><strong>Routine ID:</strong> <span th:text="${progressEntry.routineId}">ID</span></p>
+                </div>
+            </div>
+
+            <!-- Progress Entries -->
+            <div class="card">
+                <h2 class="card-title">Progress History</h2>
+                <p>Total workout sessions: <strong th:text="${progressEntry.entries != null ? progressEntry.entries.size() : 0}">0</strong></p>
+
+                <div class="progress-timeline" th:if="${progressEntry.entries != null and !progressEntry.entries.empty}">
+                    <div th:each="entry, iterStat : ${progressEntry.entries}" class="progress-entry-card">
+                        <div class="entry-header">
+                            <h3>Session <span th:text="${iterStat.index + 1}">1</span></h3>
+                            <span class="entry-date" th:text="${#dates.format(entry.date, 'dd/MM/yyyy HH:mm')}">Date</span>
+                        </div>
+
+                        <div class="entry-details">
+                            <div class="detail-item">
+                                <strong>Completed Exercises:</strong>
+                                <span th:text="${entry.completedExercises}">0</span>
+                            </div>
+
+                            <div class="detail-item">
+                                <strong>Effort Level:</strong>
+                                <div class="effort-indicator">
+                                    <span class="effort-level" th:text="${entry.effortLevel} + '/10'"
+                                          th:classappend="${entry.effortLevel >= 8 ? 'effort-high' : (entry.effortLevel >= 5 ? 'effort-medium' : 'effort-low')}">
+                                        0/10
+                                    </span>
+                                    <div class="effort-bar">
+                                        <div class="effort-fill" th:style="|width: ${entry.effortLevel * 10}%|"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trainer Feedback -->
+                            <div class="detail-item feedback-section" th:if="${entry.trainerFeedback != null and !entry.trainerFeedback.empty}">
+                                <strong>Trainer Feedback:</strong>
+                                <div class="feedback-box">
+                                    <p th:text="${entry.trainerFeedback}">Feedback text</p>
+                                </div>
+                            </div>
+
+                            <!-- Add Feedback Form (for trainers) -->
+                            <div class="detail-item" th:if="${currentUserRole == 'TRAINER' or currentUserRole == 'ADMIN'}">
+                                <form th:action="@{/progress/{id}/feedback(id=${progressEntry.id})}" method="post" class="feedback-form">
+                                    <input type="hidden" name="userId" th:value="${progressEntry.userId}">
+                                    <input type="hidden" name="routineId" th:value="${progressEntry.routineId}">
+                                    <input type="hidden" name="entryIndex" th:value="${iterStat.index}">
+                                    <input type="hidden" name="trainerId" th:value="${trainerId}">
+
+                                    <label th:for="'feedback_' + ${iterStat.index}">
+                                        <strong th:text="${entry.trainerFeedback != null ? 'Update Feedback:' : 'Add Feedback:'}">Add Feedback:</strong>
+                                    </label>
+                                    <textarea th:id="'feedback_' + ${iterStat.index}" name="feedback" rows="3"
+                                              th:text="${entry.trainerFeedback}"
+                                              placeholder="Provide constructive feedback..."></textarea>
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <span th:text="${entry.trainerFeedback != null ? 'Update Feedback' : 'Add Feedback'}">Add Feedback</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Entries Message -->
+                <div th:if="${progressEntry.entries == null or progressEntry.entries.empty}">
+                    <p>No progress entries recorded yet.</p>
+                </div>
+            </div>
+
+            <!-- Statistics Summary -->
+            <div class="card">
+                <h2 class="card-title">Summary Statistics</h2>
+                <div class="stats-grid" th:if="${progressEntry.entries != null and !progressEntry.entries.empty}">
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${progressEntry.entries.size()}">0</div>
+                        <div class="stat-label">Total Sessions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${#aggregates.sum(progressEntry.entries.![completedExercises])}">0</div>
+                        <div class="stat-label">Total Exercises Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${#numbers.formatDecimal(#aggregates.avg(progressEntry.entries.![effortLevel]), 1, 1)}">0.0</div>
+                        <div class="stat-label">Average Effort</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" th:text="${#dates.format(progressEntry.entries[progressEntry.entries.size() - 1].date, 'dd/MM/yyyy')}">Date</div>
+                        <div class="stat-label">Last Workout</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card-actions">
+                <a th:href="@{/progress/log(userId=${progressEntry.userId},routineId=${progressEntry.routineId})}"
+                   class="btn btn-primary">Log New Progress</a>
+                <a th:href="@{/routines/{id}(id=${progressEntry.routineId})}" class="btn btn-secondary">View Routine</a>
+                <form th:action="@{/progress/{id}/delete(id=${progressEntry.id})}" method="post" style="display: inline;"
+                      onsubmit="return confirm('Are you sure you want to delete all progress for this routine?');">
+                    <button type="submit" class="btn btn-danger">Delete Progress</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Progress Not Found -->
+        <div class="card" th:if="${progressEntry == null}">
+            <h2 class="card-title">Progress Not Found</h2>
+            <p>The progress entry you're looking for doesn't exist.</p>
+            <a th:href="@{/progress}" class="btn btn-primary">Back to Progress</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

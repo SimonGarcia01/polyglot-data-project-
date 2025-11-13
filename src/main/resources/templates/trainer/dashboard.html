@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Trainer Dashboard</h1>
+        <p>Welcome, <strong th:text="${trainer != null ? trainer.name : 'Trainer'}">Trainer</strong>!</p>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Statistics Overview -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2 class="card-title">Assigned Users</h2>
+                <p>You currently have <strong th:text="${assignedUserCount}">0</strong> users assigned to you.</p>
+                <a th:href="@{/trainer/assigned-users(trainerId=${trainerId})}" class="btn btn-primary">View All Users</a>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Quick Actions</h2>
+                <ul class="action-list">
+                    <li><a th:href="@{/trainer/assigned-users(trainerId=${trainerId})}">View My Users</a></li>
+                    <li><a th:href="@{/routines/new}">Create Template Routine</a></li>
+                    <li><a th:href="@{/exercises/new}">Add New Exercise</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Assigned Users List -->
+        <div class="card" th:if="${assignedUsers != null and !assignedUsers.empty}">
+            <h2 class="card-title">Your Assigned Users</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${assignedUsers}">
+                        <td th:text="${user.name}">User Name</td>
+                        <td th:text="${user.email}">user@email.com</td>
+                        <td>
+                            <span class="badge" th:text="${user.role}"
+                                  th:classappend="${user.role == 'student' ? 'badge-student' : 'badge-collaborator'}">
+                                Role
+                            </span>
+                        </td>
+                        <td>
+                            <a th:href="@{/trainer/user/{id}/progress(id=${user.id})}" class="btn btn-sm btn-secondary">View Progress</a>
+                            <a th:href="@{/trainer/user/{id}/routines(id=${user.id})}" class="btn btn-sm btn-secondary">View Routines</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- No Users Assigned Message -->
+        <div class="card" th:if="${assignedUsers == null or assignedUsers.empty}">
+            <h2 class="card-title">No Users Assigned</h2>
+            <p>You don't have any users assigned to you yet. Contact an administrator to get users assigned.</p>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

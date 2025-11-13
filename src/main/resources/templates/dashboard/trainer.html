@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Trainer Dashboard</h1>
+        <p>Welcome, <span th:text="${trainer.name}">Trainer</span>!</p>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2 class="card-title">Assigned Users</h2>
+                <p>You are currently mentoring <strong th:text="${assignedUserCount}">X</strong> users.</p>
+                <a th:href="@{/trainer/assigned-users}" class="btn btn-primary">View Users</a>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Create Predefined Routine</h2>
+                <p>Design a new routine for users to adopt.</p>
+                <a th:href="@{/routines/new?predefined=true}" class="btn btn-primary">New Routine</a>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Add New Exercise</h2>
+                <p>Expand the library of available exercises.</p>
+                <a th:href="@{/exercises/new}" class="btn btn-primary">New Exercise</a>
+            </div>
+            <div class="card">
+                <h2 class="card-title">Monthly Stats</h2>
+                <p>New assignments this month: <strong th:text="${stats.newAssignments}">Y</strong></p>
+                <p>Follow-ups this month: <strong th:text="${stats.followUps}">Z</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <h1>Assign Trainer to User</h1>
+        <form th:action="@{/admin/assign-trainer}" method="post" class="form-card">
+            <div class="input-group">
+                <label for="traineeId">Select User (Student/Collaborator)</label>
+                <select id="traineeId" name="traineeId" required>
+                    <optgroup label="Students">
+                        <option th:each="student : ${students}"
+                                th:value="${student.id}"
+                                th:text="|${student.name} (${student.email})|">Student</option>
+                    </optgroup>
+                    <optgroup label="Collaborators">
+                        <option th:each="collaborator : ${collaborators}"
+                                th:value="${collaborator.id}"
+                                th:text="|${collaborator.name} (${collaborator.email})|">Collaborator</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="trainerId">Select Trainer</label>
+                <select id="trainerId" name="trainerId" required>
+                    <option th:each="trainer : ${trainers}"
+                            th:value="${trainer.id}"
+                            th:text="|${trainer.name} (${trainer.email})|">Trainer</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign</button>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>My Progress History</h1>
+            <a th:href="@{/progress/log(userId=${userId})}" class="btn btn-primary">+ Log New Progress</a>
+        </div>
+
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Progress Entries -->
+        <div th:if="${progressEntries != null and !progressEntries.empty}">
+            <div th:each="progressEntry : ${progressEntries}" class="progress-routine-card">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Routine Progress</h2>
+                        <a th:href="@{/progress/{id}(id=${progressEntry.id})}" class="btn btn-sm btn-secondary">View Details</a>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>User ID:</strong> <span th:text="${progressEntry.userId}">User</span></p>
+                        <p><strong>Routine ID:</strong> <span th:text="${progressEntry.routineId}">Routine</span></p>
+                        <p><strong>Total Entries:</strong> <span th:text="${progressEntry.entries != null ? progressEntry.entries.size() : 0}">0</span> workouts logged</p>
+
+                        <!-- Show latest entry preview -->
+                        <div th:if="${progressEntry.entries != null and !progressEntry.entries.empty}" class="latest-entry">
+                            <h3>Latest Workout:</h3>
+                            <div th:with="latestEntry=${progressEntry.entries[progressEntry.entries.size() - 1]}">
+                                <p><strong>Date:</strong> <span th:text="${#dates.format(latestEntry.date, 'MMMM dd, yyyy HH:mm')}">Date</span></p>
+                                <p><strong>Exercises Completed:</strong> <span th:text="${latestEntry.completedExercises}">0</span></p>
+                                <p><strong>Effort Level:</strong>
+                                    <span class="effort-badge"
+                                          th:classappend="${latestEntry.effortLevel <= 3 ? 'effort-low' : (latestEntry.effortLevel <= 7 ? 'effort-medium' : 'effort-high')}"
+                                          th:text="${latestEntry.effortLevel + '/10'}">5/10</span>
+                                </p>
+                                <div th:if="${latestEntry.trainerFeedback}" class="trainer-feedback">
+                                    <strong>Trainer Feedback:</strong>
+                                    <p th:text="${latestEntry.trainerFeedback}">Feedback</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Show all entries summary -->
+                        <div th:if="${progressEntry.entries != null and progressEntry.entries.size() > 1}" class="entries-summary">
+                            <h4>All Workouts:</h4>
+                            <div class="entries-list">
+                                <div th:each="entry, iterStat : ${progressEntry.entries}" class="entry-summary-item">
+                                    <span class="entry-number" th:text="${'#' + (iterStat.index + 1)}">1</span>
+                                    <span th:text="${#dates.format(entry.date, 'MMM dd, yyyy')}">Date</span>
+                                    <span class="entry-exercises" th:text="${entry.completedExercises + ' exercises'}">5 exercises</span>
+                                    <span class="effort-indicator"
+                                          th:classappend="${entry.effortLevel <= 3 ? 'effort-low' : (entry.effortLevel <= 7 ? 'effort-medium' : 'effort-high')}"
+                                          th:text="${entry.effortLevel + '/10'}">5/10</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="card" th:if="${progressEntries == null or progressEntries.empty}">
+            <div class="empty-state">
+                <h2>No Progress Yet</h2>
+                <p>You haven't logged any workout progress yet. Start tracking your fitness journey today!</p>
+                <a th:href="@{/progress/log(userId=${userId})}" class="btn btn-primary">Log Your First Workout</a>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="card info-card">
+            <h3>Why Track Progress?</h3>
+            <ul>
+                <li><strong>Stay Motivated:</strong> See your improvements over time</li>
+                <li><strong>Identify Patterns:</strong> Understand what works best for you</li>
+                <li><strong>Get Feedback:</strong> Receive personalized advice from trainers</li>
+                <li><strong>Set Goals:</strong> Track your journey towards fitness goals</li>
+            </ul>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <style>
+        .progress-routine-card {
+            margin-bottom: 2rem;
+        }
+
+        .latest-entry {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .latest-entry h3 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 1.1rem;
+        }
+
+        .effort-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .effort-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .effort-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .effort-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .trainer-feedback {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+
+        .trainer-feedback strong {
+            color: #007bff;
+        }
+
+        .entries-summary {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .entries-summary h4 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .entries-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .entry-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .entry-number {
+            font-weight: 700;
+            color: #007bff;
+            min-width: 30px;
+        }
+
+        .entry-exercises {
+            color: #666;
+        }
+
+        .effort-indicator {
+            margin-left: auto;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state h2 {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+        }
+
+        .info-card h3 {
+            margin-top: 0;
+            color: #28a745;
+        }
+
+        .info-card ul {
+            margin-bottom: 0;
+            padding-left: 1.5rem;
+        }
+
+        .info-card li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+    </style>
+</body>
+</html>
